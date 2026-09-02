@@ -1,10 +1,10 @@
 {
   "version": "1.0.0",
-  "generated_at": "2026-09-02T13:02:38.471Z",
+  "generated_at": "2026-09-02T21:21:00.798Z",
   "artifacts": [
     {
       "name": "forgeos-1.0.0.zip",
-      "sha256": "132a3921bca356ad3fc9ad690a8f669740da32faffba5aba82a899c8a1f5331c"
+      "sha256": "2d7a69e0b9199cb528ec7f8da236743084cbbfa9d285eebd36f696b3a7531c6b"
     },
     {
       "name": ".cursor-plugin/plugin.json",

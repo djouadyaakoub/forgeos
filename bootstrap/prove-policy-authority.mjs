@@ -10,7 +10,21 @@ import { getPolicyAuthority, loadRules } from '../policy/engine.mjs';
 
 const args = process.argv.slice(2);
 const idx = args.indexOf('--project-dir');
-const projectDir = idx >= 0 ? path.resolve(args[idx + 1]) : 'C:/Apps/speed-flexy-server';
+
+function resolveProjectDir() {
+  if (idx >= 0 && args[idx + 1]) return path.resolve(args[idx + 1]);
+  if (process.env.CURSOR_PROJECT_DIR) return path.resolve(process.env.CURSOR_PROJECT_DIR);
+  if (process.env.FORGEOS_TEST_DIR) return path.resolve(process.env.FORGEOS_TEST_DIR);
+  if (process.env.AGENT_OS_TEST_DIR) return path.resolve(process.env.AGENT_OS_TEST_DIR);
+  console.error(JSON.stringify({
+    action: 'prove-policy-authority',
+    status: 'MISSING_PROJECT_DIR',
+    message: 'Pass --project-dir <path> or set CURSOR_PROJECT_DIR / FORGEOS_TEST_DIR',
+  }));
+  process.exit(2);
+}
+
+const projectDir = resolveProjectDir();
 
 process.env.CURSOR_PROJECT_DIR = projectDir;
 
