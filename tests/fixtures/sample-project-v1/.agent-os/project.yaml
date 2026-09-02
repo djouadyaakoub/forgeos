@@ -1,0 +1,30 @@
+schema_version: 1
+
+agent_os:
+  version: ">=1.0 <2.0"
+  adapter_schema_version: 0
+  compatibility:
+    auto_migrate: true
+
+project:
+  id: sample-project-v1
+  name: Sample Project V1
+  type: application
+  task_id_prefix: SAMPLEV1
+
+stack:
+  detected: [node]
+
+paths:
+  docs: docs/
+
+knowledge:
+  stack: docs/STACK.md
+
+capabilities: []
+
+policy:
+  protected_paths: []
+
+verification:
+  commands: []

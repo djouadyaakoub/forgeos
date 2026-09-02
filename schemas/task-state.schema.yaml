@@ -1,0 +1,44 @@
+schema_version: 1
+
+lifecycle:
+  - received
+  - classified
+  - planned
+  - delegated
+  - in_progress
+  - blocked
+  - awaiting_approval
+  - verification
+  - completed
+  - failed
+  - cancelled
+
+task_id_format:
+  pattern: "<PREFIX>-YYYYMMDD-NNN"
+  prefix_source: .agent-os/project.yaml project.task_id_prefix
+  default_prefix: TASK
+  allocation: docs/project/tasks/index.yaml
+
+persistence:
+  git_backed:
+    task_file: docs/project/tasks/{bucket}/{task_id}/task.yaml
+    handoff_dir: docs/project/tasks/{bucket}/{task_id}/handoffs/
+  never_store: [raw_chat, secrets, private_reasoning]
+
+ownership:
+  primary_agent: orchestrator
+  rule: specialists own delegated subtask only
+
+fields:
+  task_id: { required: true }
+  status: { required: true }
+  approval:
+    status: [not_required, pending, approved, rejected, expired]
+    scope: [string]
+  verification:
+    status: [pending, passed, failed, skipped]
+
+completion_rules:
+  - required_specialists_finished
+  - verification_passed_or_documented_skip
+  - approval_requirements_satisfied

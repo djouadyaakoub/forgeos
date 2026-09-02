@@ -1,0 +1,45 @@
+schema_version: 1
+
+capability:
+  id: string
+  description: string
+  domains: [string]
+  paths_owned: [glob]
+  paths_readable: [glob]
+  paths_writable: [glob]
+  paths_forbidden: [glob]
+  tools: [string]
+  mcp_namespaces: [string]
+  tool_profile: string
+  verification: [string]
+  approval_tier_max: integer
+  specialist_ids: [string]
+  playbook: string
+  permanent: boolean
+  scope: global | project
+
+matching:
+  inputs:
+    - user_request
+    - touched_paths
+    - required_operations
+    - sensitive_domain_flags
+  outputs:
+    - ranked_capabilities
+    - confidence: low | medium | high
+    - missing_capabilities
+  rules:
+    - prefer_capability_over_name
+    - require_path_ownership_match_for_writes
+    - project_overrides_generic_on_path_match
+    - escalate_cross_domain_to_architect
+    - security_review_for_sensitive_domains
+
+effective_registry:
+  formula: global_capabilities + project_capabilities
+  precedence: project_paths_override_generic_routing
+
+dynamic_agent:
+  ephemeral_triggers:
+    - no_capability_covers_required_operations
+  forbidden_auto_permanent: true

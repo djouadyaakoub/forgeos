@@ -1,0 +1,10 @@
+problem: "test topic"
+cached_at: 2026-09-02T12:58:56.452Z
+ttl_days: 90
+
+---
+{
+  "research_result": {
+    "conclusion": "B only"
+  }
+}

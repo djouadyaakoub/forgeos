@@ -1,0 +1,60 @@
+schema_version: 1
+
+# Universal Agent OS — project adapter manifest
+# Location: .agent-os/project.yaml
+
+agent_os:
+  version: ">=1.0 <2.0"   # compatible Agent OS version range
+
+project:
+  id: my-project
+  name: My Project
+  type: application      # application | library | monorepo | infrastructure
+  task_id_prefix: PROJ   # task IDs: PROJ-YYYYMMDD-NNN
+
+stack:
+  backend: []            # e.g. go, node
+  frontend: []
+  mobile: []
+  desktop: []
+  database: []
+
+paths:
+  backend:
+  frontend:
+  mobile:
+  docs: docs/
+  tasks: docs/project/tasks/
+
+knowledge:
+  stack: docs/STACK.md
+  architecture: docs/architecture/
+  contracts: docs/contracts/
+  adr: docs/adr/
+  tasks: docs/project/tasks/
+  lessons: docs/runbooks/lessons/
+
+capabilities:
+  - id: example-capability
+    description: Project-specific capability
+    domains: [backend]
+    paths: [src/**]
+    agents: [backend-specialist]
+
+agents:
+  backend-specialist:
+    tool_profile: implement-local
+    approval_tier_max: 2
+    paths_writable: [src/**]
+
+policy:
+  protected_paths: []
+  tier3_operations: []   # project-specific Tier 3 ops (additive to global)
+  shell_rules: []
+  mcp_rules: []
+
+integrations:
+  mcp: []
+
+verification:
+  commands: []

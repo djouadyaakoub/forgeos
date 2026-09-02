@@ -1,0 +1,28 @@
+{
+  "identity": {
+    "id": "sim-activation",
+    "name": "sim-activation",
+    "path": "C:\\Apps\\sim-activation",
+    "has_forgeos_manifest": false,
+    "has_agents_md": true,
+    "has_registry": false,
+    "has_specialists": true,
+    "has_playbooks": true
+  },
+  "capability_count": 14,
+  "agent_count": 24,
+  "ownership_count": 10,
+  "deployment_providers": [
+    "flutter-build",
+    "supabase",
+    "ci-cd"
+  ],
+  "verification_count": 7,
+  "contradictions": 24,
+  "confidence": {
+    "capabilities": 0.95,
+    "agents": 0.95,
+    "ownership": 0.75,
+    "overall": 0.91
+  }
+}

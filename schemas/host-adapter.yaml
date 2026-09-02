@@ -1,0 +1,19 @@
+# Host adapter contract — editor/host integrations implement this schema
+
+host_adapter:
+  id: ""
+  name: ""
+
+  capabilities:
+    agents: false
+    hooks: false
+    tasks: false
+    terminal: false
+    workspace: false
+    approval_ui: false
+
+  runtime:
+    entrypoint: ""
+
+  distribution:
+    plugin_id: ""

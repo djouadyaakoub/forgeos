@@ -1,0 +1,25 @@
+{
+  "name": "cursor-agent-os",
+  "displayName": "ForgeOS for Cursor",
+  "version": "1.0.0",
+  "description": "ForgeOS — Universal Development Intelligence Platform. Cursor adapter for orchestration, policy, agents, intelligence, and project-aware automation.",
+  "author": "ForgeOS",
+  "license": "MIT",
+  "keywords": [
+    "forgeos",
+    "orchestrator",
+    "policy",
+    "hooks",
+    "multi-agent",
+    "bootstrap",
+    "agent-os"
+  ],
+  "agents": "./agents",
+  "skills": "./skills",
+  "hooks": "./policy/hooks",
+  "rules": "./rules",
+  "forgeos": {
+    "product_id": "forgeos",
+    "adapter": "cursor"
+  }
+}

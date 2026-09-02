@@ -1,0 +1,19 @@
+schema_version: 1
+
+# Project capability registry — extends global Agent OS registry
+# Global capabilities: orchestration, cross-cutting-design, reproduce-bug, auth-review, documentation-sync
+
+capabilities:
+  - id: example-backend
+    description: Backend API implementation
+    domains: [backend]
+    paths_owned: [src/api/**]
+    paths_writable: [src/api/**]
+    specialist_ids: [backend-specialist]
+    tool_profile: implement-local
+    approval_tier_max: 2
+    permanent: true
+
+matching:
+  rules:
+    - project_capability_overrides_generic_when_path_matches

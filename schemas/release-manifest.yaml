@@ -1,0 +1,37 @@
+# Release manifest schema — required for every GitHub release
+
+release:
+  version: "1.0.0"              # semver, must match package.json
+  plugin_id: cursor-agent-os
+
+  adapter:
+    min_schema: 1
+    max_schema: 1
+
+  min_adapter_schema_version: 1  # legacy alias
+
+  required_features: []
+
+  breaking: false
+
+  migrations:
+    available: true
+
+  security:
+    advisory: false
+    requires_manual_review: false
+
+  artifacts:
+    - name: cursor-agent-os-1.0.0.zip
+      sha256: ""
+
+  version_history:
+    - version: "1.0.0"
+      date: ""
+      breaking: false
+      security: false
+
+  supply_chain:
+    repository: cursor-agent-os
+    source: github_release
+    owner: ""

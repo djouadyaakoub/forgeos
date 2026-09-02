@@ -1,0 +1,40 @@
+schema_version: 1
+
+profiles:
+  read-explore:
+    approval_tier_max: 0
+    allows_write: false
+    allows_shell_mutating: false
+  implement-local:
+    approval_tier_max: 1
+    allows_write: true
+    allows_shell_mutating: true
+  test:
+    approval_tier_max: 2
+    allows_write: true
+    allows_shell_mutating: true
+  schema:
+    approval_tier_max: 2
+    allows_write: true
+    allows_shell_mutating: true
+  release:
+    approval_tier_max: 3
+    allows_write: true
+    allows_shell_mutating: true
+  production-restricted:
+    approval_tier_max: 3
+    allows_write: false
+    allows_shell_mutating: false
+  forbidden:
+    approval_tier_max: 3
+    allows_write: false
+    allows_shell_mutating: false
+
+effective_policy:
+  formula: global_profile ∩ project_policy ∩ agent_permissions ∩ task_scope ∩ approval
+
+operations:
+  tier_0: [read, search, mcp_read]
+  tier_1: [local_file_edit, local_build, docs_edit]
+  tier_2: [test_suites, linters, draft_schema_files]
+  tier_3: [git_push, production_deploy, secret_rotation, destructive_remote_schema, agent_os_config_write]

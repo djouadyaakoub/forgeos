@@ -1,0 +1,43 @@
+schema_version: 1
+
+agent_os:
+  version: ">=1.0 <2.0"
+  adapter_schema_version: 0
+  compatibility:
+    auto_migrate: false
+
+project:
+  id: project-b
+  name: Project B SQLite
+  task_id_prefix: PROJB
+
+stack:
+  database: [sqlite]
+
+paths:
+  database: data/
+
+knowledge:
+  tasks: docs/project/tasks/
+
+capabilities:
+  - id: sqlite-specialist
+    description: SQLite database specialist
+    domains: [database]
+    paths: [data/**]
+    agents: [sqlite-specialist]
+
+agents:
+  sqlite-specialist:
+    tool_profile: schema
+    approval_tier_max: 2
+    paths_writable:
+      - data/**
+
+policy:
+  tier3_operations:
+    - sqlite_production_migration
+
+verification:
+  commands:
+    - sqlite3 --version

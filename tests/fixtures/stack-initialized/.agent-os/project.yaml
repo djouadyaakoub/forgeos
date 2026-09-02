@@ -1,0 +1,4 @@
+schema_version: 1
+project:
+  id: init
+  task_id_prefix: INIT

@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Secret scan
+        run: node scripts/security/secret-scan.mjs
+
+      - name: Distribution tests
+        run: node tests/distribution-update.test.mjs
+        env:
+          AGENT_OS_SKIP_FULL_REGRESSION: '1'
+
+      - name: Distribution security tests
+        run: node tests/distribution-security.test.mjs
+        env:
+          AGENT_OS_SKIP_FULL_REGRESSION: '1'
+
+      - name: Core test suites
+        run: |
+          npm test
+          npm run test:policy
+          npm run test:bootstrap
+          npm run test:adapter
+          npm run test:runtime
+          npm run test:plugin
+          npm run test:intelligence
+          npm run test:orchestration
+          npm run test:deployment
+
+      - name: Release validation (no tag)
+        run: node scripts/release/validate-release.mjs
+        env:
+          AGENT_OS_SKIP_FULL_REGRESSION: '1'

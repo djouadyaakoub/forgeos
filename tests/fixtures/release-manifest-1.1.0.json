@@ -1,0 +1,12 @@
+{
+  "release": {
+    "version": "1.1.0",
+    "plugin_id": "forgeos",
+    "adapter": { "min_schema": 1, "max_schema": 1 },
+    "min_adapter_schema_version": 1,
+    "breaking": false,
+    "security": { "advisory": false, "requires_manual_review": false },
+    "artifacts": [{ "name": "forgeos-1.1.0.zip", "sha256": "" }],
+    "supply_chain": { "repository": "forgeos", "source": "github_release", "owner": "" }
+  }
+}

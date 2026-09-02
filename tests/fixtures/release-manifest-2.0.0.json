@@ -1,0 +1,18 @@
+{
+  "release": {
+    "version": "2.0.0",
+    "min_adapter_schema_version": 2,
+    "required_features": [],
+    "breaking": true,
+    "migrations": {
+      "available": true
+    },
+    "security": {
+      "requires_manual_review": true
+    },
+    "supply_chain": {
+      "repository": "cursor-agent-os",
+      "source": "github_release"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+---
+description: Core agent discipline — preflight, evidence, no hallucination. Universal Agent OS baseline.
+alwaysApply: true
+---
+
+# Core Agent Discipline
+
+## Law 0 — Preflight
+
+Before editing: read relevant source of truth; confirm paths, contracts, and ownership.
+
+## Law 4 — Postflight
+
+Before claiming done: run verification; report evidence, docs touched, residual risks.
+
+## Rules
+
+- Code/config beats documentation when they conflict — report contradictions.
+- Do not invent APIs, tables, or stack choices not in the repo.
+- Delegate implementation to path owners.
+- Tier 3 requires explicit human approval in task scope.

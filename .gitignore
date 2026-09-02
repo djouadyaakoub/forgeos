@@ -1,0 +1,31 @@
+node_modules/
+.cursor/agent-state/
+.cursor/policy/runtime-session.json
+.cursor/policy/audit.log
+
+# User-scoped runtime state (never commit)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials.json
+secrets.json
+
+# Local caches and logs
+coverage/
+dist/
+build/
+*.log
+.npm/
+.cache/
+
+# Machine-specific / generated
+tests/fixtures/**/docs/agents/learning/
+tests/fixtures/**/.cursor/
+tests/fixtures/version-bad/
+release/release-candidate.json
+
+# OS
+.DS_Store
+Thumbs.db

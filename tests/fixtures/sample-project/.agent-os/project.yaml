@@ -1,0 +1,111 @@
+schema_version: 1
+
+agent_os:
+  version: ">=1.0 <2.0"
+
+project:
+  id: sample-project
+  name: Sample Project
+  type: application
+  task_id_prefix: SAMPLE
+
+stack:
+  detected: [node]
+  components:
+    api: [node]
+
+paths:
+  docs: docs/
+  tasks: docs/project/tasks/
+
+knowledge:
+  stack: docs/STACK.md
+
+capabilities:
+  - id: node-api
+    description: Node API handlers
+    domains: [backend, api]
+    paths: ["src/**"]
+    agent: api-specialist
+    source: .cursor/agents/registry.yaml
+
+agents:
+  api-specialist:
+    tool_profile: implement-local
+    approval_tier_max: 2
+    paths_writable:
+      - src/**
+    source: .cursor/agents/registry.yaml
+
+policy:
+  protected_paths:
+    - config/secrets.json
+  tier3_operations:
+    - id: sample_deploy
+      description: Sample deploy operation
+      approval_scope: sample_deploy
+      source: test-fixture
+
+integrations:
+  mcp: []
+
+verification:
+  commands:
+    - name: test
+      command: "npm test"
+      scope: api-specialist
+      source: package.json
+
+deployment:
+  profiles:
+    - component: frontend
+      provider: vercel
+      config: frontend/vercel.json
+      environment: staging
+      build:
+        commands: ["npm run build"]
+        artifacts: ["frontend/dist"]
+      deploy:
+        commands: ["vercel deploy"]
+        approval_required: true
+      verify:
+        health_checks:
+          - name: frontend-health
+            type: http
+            url: "/"
+        smoke_tests:
+          - name: homepage-loads
+            command: "curl -f $DEPLOY_URL"
+      rollback:
+        supported: true
+        method: vercel_rollback
+    - component: backend
+      provider: railway
+      config: backend/railway.json
+      environment: staging
+      build:
+        commands: ["npm run build"]
+        artifacts: ["backend/dist"]
+      deploy:
+        commands: ["railway up"]
+        approval_required: true
+      verify:
+        health_checks:
+          - name: api-health
+            type: http
+            url: "/health"
+      post_deploy:
+        observation_window: 10m
+
+environment:
+  environments:
+    - name: development
+      config_files: [".env.development"]
+      required_keys: ["API_BASE_URL", "NODE_ENV"]
+    - name: production
+      config_files: [".env.production"]
+      required_keys: ["API_BASE_URL", "DATABASE_URL", "NODE_ENV"]
+
+compatibility:
+  auto_migrate: false
+  required_features: []

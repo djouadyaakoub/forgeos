@@ -1,0 +1,303 @@
+schema_version: 1
+agent_os_version: "1.0.0"
+
+# Global capability registry — universal specialists only.
+# Project-specific capabilities belong in <project>/.cursor/agents/registry.yaml
+
+capabilities:
+  - id: orchestration
+    description: Classify, plan, persist tasks, route, delegate, aggregate
+    domains: [coordination, planning]
+    specialist_ids: [orchestrator]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: cross-cutting-design
+    description: Architecture, ownership routing, contract alignment
+    domains: [architecture, design]
+    paths_writable: [docs/**, docs/adr/**, .agent-os/**]
+    specialist_ids: [architect]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: reproduce-bug
+    description: Reproduce-first debugging and minimal fixes
+    domains: [qa, testing]
+    specialist_ids: [qa-bugfix]
+    tool_profile: test
+    approval_tier_max: 2
+    permanent: true
+
+  - id: auth-review
+    description: Security, auth, secrets, tenancy review
+    domains: [security]
+    specialist_ids: [security]
+    tool_profile: read-explore
+    approval_tier_max: 2
+    permanent: true
+
+  - id: documentation-sync
+    description: Sync durable documentation with verified reality
+    domains: [docs]
+    paths_writable: [docs/**, AGENTS.md, **/AGENTS.md]
+    specialist_ids: [docs-sync]
+    tool_profile: implement-local
+    approval_tier_max: 1
+    permanent: true
+
+  - id: structure-audit
+    description: Analyze codebase structure health, misplaced files, mixed responsibilities
+    domains: [structure, organization]
+    specialist_ids: [codebase-organization]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: codebase-organization
+    description: Structure plans, safe moves, organization with risk classification
+    domains: [structure, organization]
+    paths_writable: [docs/**, docs/agents/**]
+    specialist_ids: [codebase-organization]
+    tool_profile: implement-local
+    approval_tier_max: 2
+    permanent: true
+
+  - id: solution-research
+    description: Evidence-based technical research before implementation
+    domains: [research, architecture]
+    paths_writable: [docs/agents/research/**]
+    specialist_ids: [solution-research]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: dependency-audit
+    description: Detect unused, duplicate, conflicting, or security-sensitive dependencies
+    domains: [dependencies, security]
+    specialist_ids: [codebase-organization]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: dead-code-analysis
+    description: Identify dead code candidates with evidence — no auto-delete
+    domains: [quality, structure]
+    specialist_ids: [project-archaeology]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: duplication-analysis
+    description: Detect duplicate logic, services, components — consolidation proposals only
+    domains: [quality, structure]
+    specialist_ids: [codebase-organization]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: architecture-guard
+    description: Detect architecture layer violations against docs, ADRs, contracts
+    domains: [architecture, security]
+    specialist_ids: [architect]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: change-impact
+    description: Analyze impact of changes on dependents, tests, agents, deployment
+    domains: [architecture, planning]
+    specialist_ids: [architect]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: documentation-drift
+    description: Compare implementation vs AGENTS.md, architecture, ADRs, README
+    domains: [docs, quality]
+    specialist_ids: [docs-sync]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: test-coverage-strategy
+    description: Determine if changes have appropriate test coverage
+    domains: [qa, testing]
+    specialist_ids: [qa-bugfix]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: safe-refactor
+    description: Behavior-preserving refactor workflow with baseline and verification
+    domains: [refactor, quality]
+    specialist_ids: [codebase-organization]
+    tool_profile: test
+    approval_tier_max: 2
+    permanent: true
+
+  - id: performance-investigation
+    description: Measure-first performance investigation methodology
+    domains: [performance, quality]
+    specialist_ids: [qa-bugfix]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: knowledge-curation
+    description: Classify temporary vs permanent project knowledge — no secrets
+    domains: [knowledge, docs]
+    specialist_ids: [orchestrator]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: project-archaeology
+    description: Git history and docs investigation for why code exists
+    domains: [knowledge, structure]
+    specialist_ids: [project-archaeology]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: release-readiness
+    description: Pre-release assessment across tests, security, docs, deployment
+    domains: [release, qa]
+    specialist_ids: [release-readiness]
+    tool_profile: read-explore
+    approval_tier_max: 2
+    permanent: true
+
+  - id: deployment-discovery
+    description: Discover deployment targets from project evidence and adapter
+    domains: [release, deployment]
+    specialist_ids: [release-deployment]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: deployment-plan
+    description: Create reviewable deployment plans before execution
+    domains: [release, deployment]
+    specialist_ids: [release-deployment]
+    tool_profile: read-explore
+    approval_tier_max: 2
+    permanent: true
+
+  - id: deployment-build
+    description: Build artifacts with evidence recording
+    domains: [release, deployment]
+    specialist_ids: [release-deployment]
+    tool_profile: test
+    approval_tier_max: 2
+    permanent: true
+
+  - id: deployment-execute
+    description: Execute approved deployments — policy-gated, never self-approves
+    domains: [release, deployment]
+    specialist_ids: [release-deployment]
+    tool_profile: release
+    approval_tier_max: 3
+    permanent: true
+
+  - id: deployment-verify
+    description: Post-deploy health checks, smoke tests, version verification
+    domains: [release, deployment, qa]
+    specialist_ids: [release-deployment]
+    tool_profile: read-explore
+    approval_tier_max: 2
+    permanent: true
+
+  - id: health-check
+    description: HTTP, WebSocket, CLI, database, worker, platform health checks
+    domains: [release, deployment]
+    specialist_ids: [release-deployment]
+    tool_profile: read-explore
+    approval_tier_max: 2
+    permanent: true
+
+  - id: smoke-test
+    description: Project-aware smoke tests from deployment profile
+    domains: [release, deployment, qa]
+    specialist_ids: [release-deployment]
+    tool_profile: test
+    approval_tier_max: 2
+    permanent: true
+
+  - id: rollback-plan
+    description: Rollback strategy before production deployment
+    domains: [release, deployment]
+    specialist_ids: [release-deployment]
+    tool_profile: read-explore
+    approval_tier_max: 2
+    permanent: true
+
+  - id: rollback-execute
+    description: Execute approved rollback — Tier 3, separate approval required
+    domains: [release, deployment]
+    specialist_ids: [release-deployment]
+    tool_profile: release
+    approval_tier_max: 3
+    permanent: true
+
+  - id: environment-discovery
+    description: Detect local, development, staging, production environments
+    domains: [release, deployment, config]
+    specialist_ids: [environment-config]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: environment-audit
+    description: Audit environment config shape without reading secret values
+    domains: [release, deployment, config, security]
+    specialist_ids: [environment-config]
+    tool_profile: read-explore
+    approval_tier_max: 2
+    permanent: true
+
+  - id: environment-diff
+    description: Compare environment configuration shape across environments
+    domains: [release, deployment, config]
+    specialist_ids: [environment-config]
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+
+  - id: release-notes
+    description: Evidence-based release notes from tasks and changes
+    domains: [release, docs]
+    specialist_ids: [release-deployment]
+    tool_profile: implement-local
+    approval_tier_max: 1
+    permanent: true
+
+  - id: artifact-verification
+    description: Verify build artifacts before deployment
+    domains: [release, deployment]
+    specialist_ids: [release-deployment]
+    tool_profile: read-explore
+    approval_tier_max: 2
+    permanent: true
+
+  - id: post-deploy-monitoring
+    description: Bounded post-deploy observation window
+    domains: [release, deployment]
+    specialist_ids: [release-deployment]
+    tool_profile: read-explore
+    approval_tier_max: 2
+    permanent: true
+
+matching:
+  rules:
+    - prefer_capability_over_name
+    - require_path_ownership_match_for_writes
+    - escalate_cross_domain_to_architect
+    - security_review_for_sensitive_domains
+
+dynamic_agent:
+  ephemeral_triggers:
+    - no_capability_covers_required_operations
+    - single_concern
+  forbidden_auto_permanent: true

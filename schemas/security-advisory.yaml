@@ -1,0 +1,9 @@
+# Security advisory schema — no secret information
+
+advisory:
+  id: ""
+  severity: LOW | MEDIUM | HIGH | CRITICAL
+  affected_versions: []
+  fixed_version: ""
+  summary: ""
+  published_at: ""

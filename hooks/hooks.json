@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "hooks": {
+    "subagentStart": [
+      {
+        "command": "node policy/hooks/policy-subagent-start.mjs"
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "node policy/hooks/policy-pre-tool.mjs",
+        "matcher": "Shell|Write|StrReplace|Delete|ApplyPatch",
+        "failClosed": true
+      }
+    ],
+    "beforeShellExecution": [
+      {
+        "command": "node policy/hooks/policy-shell.mjs",
+        "failClosed": true
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": "node policy/hooks/policy-mcp.mjs",
+        "failClosed": true
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": "node policy/hooks/policy-post-tool.mjs",
+        "matcher": "Write|StrReplace|Shell",
+        "failClosed": false
+      }
+    ]
+  }
+}

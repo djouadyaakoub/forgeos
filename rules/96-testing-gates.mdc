@@ -1,0 +1,12 @@
+---
+description: Verification gates — tests and builds before completion claims.
+alwaysApply: true
+---
+
+# Testing Gates
+
+Before marking work complete:
+
+1. Run project verification commands from `.agent-os/project.yaml` or handoff.
+2. Report pass, fail, or documented skip with reason.
+3. Never bypass failing tests to mark done.

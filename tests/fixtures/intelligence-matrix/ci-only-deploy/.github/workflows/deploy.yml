@@ -1,0 +1,6 @@
+name: Deploy Admin Web
+on: push
+jobs:
+  deploy:
+    steps:
+      - run: npx wrangler pages deploy dist --project-name test-admin

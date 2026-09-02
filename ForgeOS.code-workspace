@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "name": "ForgeOS",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/release/dist/**": true
+    },
+    "search.exclude": {
+      "**/release/dist/**": true,
+      "**/node_modules/**": true
+    },
+    "files.watcherExclude": {
+      "**/release/dist/**": true
+    }
+  }
+}

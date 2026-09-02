@@ -1,0 +1,34 @@
+{
+  "name": "forgeos",
+  "version": "1.0.0",
+  "description": "ForgeOS — Universal Development Intelligence Platform",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "node tests/run-universal.mjs",
+    "test:bootstrap": "node tests/bootstrap-stack.test.mjs",
+    "test:adapter": "node tests/bootstrap-adapter-extraction.test.mjs",
+    "test:runtime": "node tests/runtime-integration.test.mjs",
+    "test:plugin": "node tests/plugin-portability.test.mjs",
+    "test:intelligence": "node tests/intelligence-development.test.mjs",
+    "test:orchestration": "node tests/intelligence-orchestration.test.mjs",
+    "test:deployment": "node tests/deployment-intelligence.test.mjs",
+    "test:distribution": "node tests/distribution-update.test.mjs",
+    "test:security": "node tests/distribution-security.test.mjs",
+    "test:neutrality": "node tests/architecture/editor-neutral.test.mjs",
+    "test:migration": "node tests/migration-forgeos.test.mjs",
+    "test:branding": "node tests/branding.test.mjs",
+    "test:project-two": "node tests/project-two-sim-activation.test.mjs",
+    "test:project-intelligence": "node tests/project-intelligence.test.mjs",
+    "test:phase21": "node tests/phase21-full-e2e.mjs",
+    "secret-scan": "node scripts/security/secret-scan.mjs",
+    "build-release": "node scripts/release/build-release.mjs",
+    "validate-release": "node scripts/release/validate-release.mjs",
+    "validate-branding": "node scripts/validate-branding.mjs",
+    "test:e2e": "node bootstrap/e2e-orchestrator.mjs",
+    "test:policy": "node policy/tests/run-all.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

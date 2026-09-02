@@ -1,0 +1,22 @@
+# Structure Plan schema — reviewable organization changes
+# Risk: low | medium | high | critical (CRITICAL never auto-executes)
+
+structure_plan:
+  project: string          # required — project identifier
+  changes:                 # required — ordered list of changes
+    - action: move | rename | create_directory | delete
+      from: string          # source path (except create_directory)
+      to: string            # target path (except delete)
+      reason: string
+      risk: low | medium | high | critical
+      owner: string         # optional — agent ownership
+      imports_affected: int
+      tests_affected: int
+  expected_effects:          # list of strings
+    - string
+  verification:              # default: build, unit_tests, import_check
+    - build | unit_tests | import_tests | import_check
+  created_at: ISO8601
+  rollback:
+    strategy: reverse_changes_in_order
+    snapshot_recommended: boolean

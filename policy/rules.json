@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "agent_os_version": "1.0.0",
+  "phase": "universal-1.0",
+  "fail_closed_default": true,
+  "tier_3_operations": [
+    "git_push",
+    "git_force_push",
+    "production_deploy",
+    "production_rollback",
+    "production_migration",
+    "production_configuration_change",
+    "credential_environment_mutation",
+    "production_data_mutation",
+    "secret_rotation",
+    "destructive_remote_schema",
+    "agent_os_config_write",
+    "ephemeral_agent_activate",
+    "ephemeral_agent_tier3"
+  ],
+  "ephemeral_factory": {
+    "enabled": true,
+    "id_prefix": "ephemeral-",
+    "default_approval_tier_max": 2,
+    "specs_dir": "docs/agents/ephemeral/",
+    "runtime_registry": ".cursor/agent-state/active-ephemeral.json",
+    "exec_dir": ".cursor/agents/",
+    "forbidden_auto_permanent": true
+  },
+  "protected_path_prefixes": [
+    ".cursor/agents/",
+    ".cursor/hooks/",
+    ".cursor/skills/",
+    ".cursor/policy/",
+    "docs/agents/RUNTIME_LAW.md"
+  ],
+  "protected_path_exact": [
+    ".cursor/agents/registry.yaml",
+    ".cursor/hooks.json"
+  ],
+  "orchestrator_writable_prefixes": [
+    "docs/",
+    "docs/project/tasks/",
+    ".agent-os/"
+  ],
+  "shell_rules": [
+    {
+      "operation": "git_push",
+      "tier": 3,
+      "patterns": ["\\bgit\\s+push\\b"]
+    },
+    {
+      "operation": "git_force_push",
+      "tier": 3,
+      "patterns": [
+        "\\bgit\\s+push\\b[^\\n]*(--force|-f)\\b",
+        "\\bgit\\s+push\\b[^\\n]*\\+"
+      ]
+    },
+    {
+      "operation": "secret_rotation",
+      "tier": 3,
+      "patterns": [
+        "\\bsecrets?\\s+(set|rotate|import)\\b",
+        "\\bapi[_-]?key\\s+rotate\\b"
+      ]
+    },
+    {
+      "operation": "destructive_remote_schema",
+      "tier": 3,
+      "patterns": [
+        "\\bDROP\\s+(TABLE|DATABASE|SCHEMA)\\b",
+        "\\bTRUNCATE\\s+TABLE\\b"
+      ]
+    }
+  ],
+  "mcp_rules": [],
+  "agents": {
+    "orchestrator": {
+      "tool_profile": "read-explore",
+      "approval_tier_max": 1,
+      "paths_writable": [
+        "docs/**",
+        "docs/project/tasks/**",
+        ".agent-os/**",
+        "AGENTS.md",
+        "**/AGENTS.md"
+      ],
+      "paths_forbidden": []
+    },
+    "architect": {
+      "tool_profile": "read-explore",
+      "approval_tier_max": 1,
+      "paths_writable": [
+        "docs/**",
+        "docs/adr/**",
+        "docs/agents/**",
+        ".agent-os/**"
+      ],
+      "paths_forbidden": []
+    },
+    "qa-bugfix": {
+      "tool_profile": "test",
+      "approval_tier_max": 2,
+      "paths_writable": [],
+      "paths_forbidden": [],
+      "handoff_only_writes": true
+    },
+    "docs-sync": {
+      "tool_profile": "implement-local",
+      "approval_tier_max": 1,
+      "paths_writable": [
+        "docs/**",
+        "AGENTS.md",
+        "**/AGENTS.md",
+        ".cursor/rules/**"
+      ],
+      "paths_forbidden": []
+    },
+    "security": {
+      "tool_profile": "read-explore",
+      "approval_tier_max": 2,
+      "paths_writable": [
+        "docs/**",
+        ".cursor/rules/**"
+      ],
+      "paths_forbidden": []
+    },
+    "codebase-organization": {
+      "tool_profile": "implement-local",
+      "approval_tier_max": 2,
+      "paths_writable": [
+        "docs/**",
+        "docs/agents/**"
+      ],
+      "paths_forbidden": []
+    },
+    "solution-research": {
+      "tool_profile": "read-explore",
+      "approval_tier_max": 1,
+      "paths_writable": [
+        "docs/agents/research/**"
+      ],
+      "paths_forbidden": []
+    },
+    "project-archaeology": {
+      "tool_profile": "read-explore",
+      "approval_tier_max": 1,
+      "paths_writable": [],
+      "paths_forbidden": []
+    },
+    "release-readiness": {
+      "tool_profile": "read-explore",
+      "approval_tier_max": 2,
+      "paths_writable": [
+        "docs/**"
+      ],
+      "paths_forbidden": []
+    },
+    "release-deployment": {
+      "tool_profile": "release",
+      "approval_tier_max": 3,
+      "paths_writable": [
+        "docs/**",
+        "docs/releases/**"
+      ],
+      "paths_forbidden": []
+    },
+    "environment-config": {
+      "tool_profile": "read-explore",
+      "approval_tier_max": 2,
+      "paths_writable": [
+        "docs/**"
+      ],
+      "paths_forbidden": []
+    }
+  },
+  "tool_profiles": {
+    "read-explore": {
+      "approval_tier_max": 0,
+      "allows_write": false,
+      "allows_shell_mutating": false
+    },
+    "implement-local": {
+      "approval_tier_max": 1,
+      "allows_write": true,
+      "allows_shell_mutating": true
+    },
+    "test": {
+      "approval_tier_max": 2,
+      "allows_write": true,
+      "allows_shell_mutating": true
+    },
+    "schema": {
+      "approval_tier_max": 2,
+      "allows_write": true,
+      "allows_shell_mutating": true
+    },
+    "release": {
+      "approval_tier_max": 3,
+      "allows_write": true,
+      "allows_shell_mutating": true
+    },
+    "production-restricted": {
+      "approval_tier_max": 3,
+      "allows_write": false,
+      "allows_shell_mutating": false
+    },
+    "forbidden": {
+      "approval_tier_max": 3,
+      "allows_write": false,
+      "allows_shell_mutating": false
+    }
+  },
+  "global_security_immutable": {
+    "fail_closed_default": true,
+    "protected_path_prefixes": true,
+    "protected_path_exact": true,
+    "tier_3_requires_approval": true,
+    "cross_task_approval_isolation": true,
+    "ephemeral_self_modification_denied": true
+  }
+}

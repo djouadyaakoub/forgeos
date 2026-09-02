@@ -1,0 +1,25 @@
+# Solution research result schema — project-scoped cache only
+
+research_result:
+  problem: string
+  constraints: []
+  candidates:
+    - name: string
+      source: string           # official docs, GitHub repo, spec URL
+      architecture: string
+      relevance_score: 0.0-1.0
+      maturity: 0.0-1.0
+      maintenance: 0.0-1.0
+      security_notes: []
+      licensing: string
+      pros: []
+      cons: []
+  recommendation:
+    selected: string
+    reason: string
+    alternatives: []
+  confidence: 0.0-1.0
+  created_at: ISO8601
+
+# Cache metadata (docs/agents/research/<hash>.yaml)
+# cached_at, ttl_days (default 90, fast-changing 14)

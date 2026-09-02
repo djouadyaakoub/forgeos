@@ -1,0 +1,40 @@
+schema_version: 1
+
+learning_types:
+  - operational_lesson
+  - playbook_improvement
+  - capability_evolution
+  - architectural_decision
+
+proposal:
+  proposal_id: string       # LP-YYYYMMDD-xxxx
+  type: string
+  status: [pending, accepted, rejected]
+  task_id: string
+  title: string
+  summary: string
+  evidence: [string]
+  suggested_targets: [string]
+  review_risk: [low, medium, high]
+  auto_apply_allowed: boolean
+
+thresholds:
+  operational_lesson: { min_evidence: 1 }
+  playbook_improvement: { min_similar_failures: 2 }
+  capability_evolution: { min_ephemeral_uses: 3 }
+  architectural_decision: { human_review: required }
+
+protected_targets:
+  - .cursor/agents/registry.yaml
+  - .cursor/hooks.json
+  - .cursor/policy/
+  - docs/agents/RUNTIME_LAW.md
+  - .agent-os/
+
+on_accept:
+  operational_lesson: docs/runbooks/lessons/<proposal_id>.md
+  architectural_decision: docs/adr/ADR-PROPOSAL-<proposal_id>.md
+
+boundary:
+  global: schema + pipeline + review rules
+  project: lessons + ADRs + playbook changes

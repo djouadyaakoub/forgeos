@@ -1,0 +1,26 @@
+schema_version: 1
+
+handoff:
+  handoff_id: string
+  task_id: string
+  assigned_agent_id: string
+  objective: string
+  allowed_paths: [glob]
+  forbidden_paths: [glob]
+  tool_profile: string
+  approval_tier_max: integer
+  verification_required: [string]
+  approval_required: [string]
+  acceptance_criteria: [string]
+
+result:
+  summary: string
+  evidence: [string]
+  files_changed: [string]
+  docs_touched: [string]
+  verification_results: object
+  residual_risks: [string]
+  blockers: [string]
+  status: [completed, failed, blocked]
+
+rule: handoffs narrow scope — never broaden registry permissions

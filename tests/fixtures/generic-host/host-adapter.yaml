@@ -1,0 +1,14 @@
+host_adapter:
+  id: generic
+  name: Generic Host Fixture
+
+  capabilities:
+    agents: true
+    hooks: false
+    tasks: true
+    terminal: false
+    workspace: true
+    approval_ui: false
+
+  runtime:
+    entrypoint: tests/fixtures/generic-host/runtime.mjs

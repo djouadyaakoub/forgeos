@@ -1,0 +1,90 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2026-09-02T13:02:38.471Z",
+  "artifacts": [
+    {
+      "name": "forgeos-1.0.0.zip",
+      "sha256": "132a3921bca356ad3fc9ad690a8f669740da32faffba5aba82a899c8a1f5331c"
+    },
+    {
+      "name": ".cursor-plugin/plugin.json",
+      "sha256": "f2bf6999deb5523e5aba22a22d483419864c34e078be46c208eb7c9a013ca7c3"
+    },
+    {
+      "name": "agents/architect.md",
+      "sha256": "7f3a415fa580499e31011915865c2c57ff42f6023ce90a50ddd09f079bbcecd8"
+    },
+    {
+      "name": "agents/codebase-organization.md",
+      "sha256": "3874c0af0202d8a96b482b20fc67da9f6c78344317cf5a0e15a2d46ca01ee303"
+    },
+    {
+      "name": "agents/docs-sync.md",
+      "sha256": "85511c1c0bb3333ce5cdaf04145573743277f34e2f14f81ea9a6f395e48343a3"
+    },
+    {
+      "name": "agents/environment-config.md",
+      "sha256": "073015eb80182ecf6fe901c9e478c3bccce21b0014e8347953b001d98e446acc"
+    },
+    {
+      "name": "agents/orchestrator.md",
+      "sha256": "c410d7e27ac9eb224f178bdd5e3ebf56dfebf42975f1c2329f124b500fd73c0b"
+    },
+    {
+      "name": "agents/project-archaeology.md",
+      "sha256": "b50e2ccd7984ce275d719a67719b136c54e8b5165a81d2fcc3844f719ff066a7"
+    },
+    {
+      "name": "agents/qa-bugfix.md",
+      "sha256": "bc93f1a7e2e0fd25d658dfdb13b0310f09595d652e48231055fd0d5398d0eefc"
+    },
+    {
+      "name": "agents/registry.yaml",
+      "sha256": "9539a61d5cc0d34c758ccec1d453fdb0d0d381c3514f215febe310ef382a3564"
+    },
+    {
+      "name": "agents/release-deployment.md",
+      "sha256": "5684fb224c958fd0a726c6d054eb24c2b955c980517f2e0e787b7b97c4c8843d"
+    },
+    {
+      "name": "agents/release-readiness.md",
+      "sha256": "c2975b1278ed6ef09a69febd7d196790e9506019caf9e10f4e2fbfd8184e998e"
+    },
+    {
+      "name": "agents/security.md",
+      "sha256": "6129857f838b44e93ae9a8ef85a3c9fe0585fc1e3a379bb943ee023f02b08129"
+    },
+    {
+      "name": "agents/solution-research.md",
+      "sha256": "a4de1877c14180ecad9f970fa30ba4c93cdfbb2eab4417ebdaa02e32f5f2457a"
+    },
+    {
+      "name": "bootstrap/adapter-extraction.mjs",
+      "sha256": "7817942af3d90c3ddf140cf7274510c926aa713ac3307dc339f40d37cf5ad60b"
+    },
+    {
+      "name": "bootstrap/capability-normalizer.mjs",
+      "sha256": "258e28eb1983832bbe073bb9c9b93c590b9c2d8f28dbbd18d2cdd35652024135"
+    },
+    {
+      "name": "bootstrap/e2e-orchestrator.mjs",
+      "sha256": "aade127e3c95eeb6c979daba419eac5a6be6ebf2aa33f3f94d9d9fec62b76614"
+    },
+    {
+      "name": "bootstrap/evidence-resolver.mjs",
+      "sha256": "523961bb4616aa2081236757e2e4ac09d861d7dbda8b0ff70c832c15a8dfd7de"
+    },
+    {
+      "name": "bootstrap/initialize.mjs",
+      "sha256": "900e7160de8a15729511ac5df0c9a752eef60ac68e8411dc262f11e836b271ed"
+    },
+    {
+      "name": "bootstrap/install-from-release.mjs",
+      "sha256": "9c9ac92f94e17ceea793838144f01eea744a309f3a58dfac74e7e9ffce755d25"
+    },
+    {
+      "name": "bootstrap/install-plugin.mjs",
+      "sha256": "3b802d416201357d2b6bf0c8c94cd5eb4a5797dd285b53d3a0b15f776db5227e"
+    }
+  ]
+}

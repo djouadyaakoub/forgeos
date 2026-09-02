@@ -1,0 +1,45 @@
+{
+  "release": {
+    "version": "1.0.0",
+    "plugin_id": "forgeos",
+    "adapter": {
+      "min_schema": 1,
+      "max_schema": 1
+    },
+    "min_adapter_schema_version": 1,
+    "required_features": [],
+    "breaking": false,
+    "migrations": {
+      "available": true
+    },
+    "security": {
+      "advisory": false,
+      "requires_manual_review": false
+    },
+    "artifacts": [
+      {
+        "name": "forgeos-1.0.0.zip",
+        "sha256": "132a3921bca356ad3fc9ad690a8f669740da32faffba5aba82a899c8a1f5331c"
+      }
+    ],
+    "adapters": {
+      "cursor": {
+        "plugin_id": "cursor-agent-os"
+      }
+    },
+    "version_history": [
+      {
+        "version": "1.0.0",
+        "date": "2026-09-02",
+        "breaking": false,
+        "security": false,
+        "compatibility": "adapter_schema_1"
+      }
+    ],
+    "supply_chain": {
+      "repository": "forgeos",
+      "source": "github_release",
+      "owner": ""
+    }
+  }
+}

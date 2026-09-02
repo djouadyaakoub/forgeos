@@ -1,0 +1,53 @@
+# Deployment plan schema — required before execution
+
+deployment_plan:
+  release_id: string
+  task_id: string
+
+  components:
+    - name: string
+      provider: string
+      environment: string
+      config: string
+      evidence: []
+
+  changes:
+    - path: string
+      impact: string
+      risk_level: LOW | MEDIUM | HIGH | CRITICAL
+
+  build:
+    required: true
+
+  approvals:
+    required: true
+    scopes: []
+    task_bound: true
+    operation_bound: true
+
+  verification:
+    health_checks: []
+    smoke_tests: []
+
+  rollback:
+    available: true
+    trigger_conditions: []
+    approval_required: true
+
+  risks: []
+  environment: string
+  dry_run: false
+
+# deployment_evidence recorded after execution — no secrets
+
+deployment_evidence:
+  task_id: string
+  revision: string
+  target: string
+  environment: string
+  build: {}
+  approval: {}
+  deploy: {}
+  verification: {}
+  rollback: {}
+  outcome: string

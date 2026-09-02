@@ -1,0 +1,13 @@
+{
+  "adapter": {
+    "id": "cursor",
+    "name": "Cursor",
+    "product": "forgeos",
+    "description": "Cursor IDE integration for ForgeOS",
+    "plugin_id": "cursor-agent-os",
+    "plugin_manifest": "../../.cursor-plugin/plugin.json",
+    "hooks": "../../policy/hooks",
+    "hook_shim_path": ".cursor/hooks/forge-os",
+    "legacy_hook_shim_path": ".cursor/hooks/agent-os"
+  }
+}

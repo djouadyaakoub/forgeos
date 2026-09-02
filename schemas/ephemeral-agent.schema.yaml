@@ -1,0 +1,32 @@
+schema_version: 1
+
+ephemeral_agent:
+  agent_id: string          # ephemeral-<TASK_ID>-<slug>
+  task_id: string
+  title: string
+  purpose: string
+  capabilities: [string]
+  domains: [string]
+  allowed_paths: [glob]     # narrow allowlist required
+  forbidden_paths: [glob]
+  tool_profile: string      # max implement-local or test; not release
+  approval_tier_max: integer  # default 2
+  status: [proposed, approved, active, verification, retired, rejected]
+  retirement:
+    condition: string
+
+runtime:
+  spec_path: docs/agents/ephemeral/<agent_id>.yaml
+  exec_path: .cursor/agents/<agent_id>.md   # flat path mandatory
+  registry: .cursor/agent-state/active-ephemeral.json
+
+forbidden:
+  - modify_registry
+  - modify_hooks
+  - modify_policy
+  - modify_own_spec
+  - broaden_own_permissions
+  - auto_permanent_promotion
+
+promotion:
+  requires: [architect, security_if_relevant, human, git_review, registry_update]

@@ -1,0 +1,27 @@
+# Deployment profile schema — project-scoped, no credentials
+
+deployment_profile:
+  component: string          # e.g. backend, web, frontend
+  provider: string           # e.g. fly.io, vercel, railway, supabase
+
+  build:
+    commands: []
+    artifacts: []
+
+  deploy:
+    commands: []
+    approval_required: true    # default true
+
+  verify:
+    health_checks: []        # http | websocket | cli | database | worker | platform | custom
+    smoke_tests: []
+
+  rollback:
+    supported: true
+    method: string
+    approval_required: true
+
+  post_deploy:
+    observation_window: 10m    # bounded monitoring
+
+  environment: string        # staging | production

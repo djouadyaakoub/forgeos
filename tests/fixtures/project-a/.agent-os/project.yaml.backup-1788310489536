@@ -1,0 +1,41 @@
+schema_version: 1
+
+agent_os:
+  installed_version: "1.1.0"
+  version: ">=1.0 <2.0"
+
+project:
+  id: project-a
+  name: Project A Postgres
+  task_id_prefix: PROJA
+
+stack:
+  database: [postgres]
+
+paths:
+  database: db/
+
+knowledge:
+  tasks: docs/project/tasks/
+
+capabilities:
+  - id: postgres-specialist
+    description: Postgres database specialist
+    domains: [database]
+    paths: [db/**]
+    agents: [postgres-specialist]
+
+agents:
+  postgres-specialist:
+    tool_profile: schema
+    approval_tier_max: 2
+    paths_writable:
+      - db/**
+
+policy:
+  tier3_operations:
+    - postgres_production_migration
+
+verification:
+  commands:
+    - psql --version

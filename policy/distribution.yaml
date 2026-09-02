@@ -1,0 +1,17 @@
+# ForgeOS — distribution configuration (no credentials)
+distribution:
+  source:
+    provider: github
+    owner: ""
+    repository: forgeos
+    plugin_id: forgeos
+
+  release_channel: stable
+
+  update:
+    enabled: true
+    check_interval: "24h"
+
+adapters:
+  cursor:
+    plugin_id: cursor-agent-os

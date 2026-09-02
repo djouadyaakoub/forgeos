@@ -1,0 +1,444 @@
+﻿{
+  "project_dir": "C:\\Apps\\sim-activation",
+  "project_kind": "EXISTING_PROJECT",
+  "agent_os_initialized": false,
+  "existing_project": true,
+  "mode": "EXISTING_PROJECT",
+  "initialized": true,
+  "stack": {
+    "repository": {
+      "go": false,
+      "node": true,
+      "python": true,
+      "rust": false,
+      "flutter": true,
+      "dotnet": false,
+      "java": true,
+      "docker": false
+    },
+    "components": {
+      "admin-web": {
+        "go": false,
+        "node": true,
+        "python": false,
+        "rust": false,
+        "flutter": false,
+        "dotnet": false,
+        "java": false,
+        "docker": false
+      },
+      "tools": {
+        "go": false,
+        "node": true,
+        "python": true,
+        "rust": false,
+        "flutter": false,
+        "dotnet": false,
+        "java": false,
+        "docker": false
+      },
+      "admin": {
+        "go": false,
+        "node": false,
+        "python": false,
+        "rust": false,
+        "flutter": true,
+        "dotnet": false,
+        "java": false,
+        "docker": false
+      },
+      "distributeur": {
+        "go": false,
+        "node": false,
+        "python": false,
+        "rust": false,
+        "flutter": true,
+        "dotnet": false,
+        "java": true,
+        "docker": false
+      },
+      "packages": {
+        "go": false,
+        "node": false,
+        "python": false,
+        "rust": false,
+        "flutter": true,
+        "dotnet": false,
+        "java": true,
+        "docker": false
+      },
+      "pdv": {
+        "go": false,
+        "node": false,
+        "python": false,
+        "rust": false,
+        "flutter": true,
+        "dotnet": false,
+        "java": true,
+        "docker": false
+      }
+    }
+  },
+  "stack_evidence": {
+    "go": [],
+    "node": [
+      "admin-web/package-lock.json",
+      "admin-web/package.json",
+      "tools/download-worker/package.json"
+    ],
+    "python": [
+      "tools/photo_hce_test/requirements.txt"
+    ],
+    "rust": [],
+    "flutter": [
+      "admin/pubspec.yaml",
+      "distributeur/pubspec.yaml",
+      "packages/cnibe_hce/pubspec.yaml",
+      "packages/secure_session/pubspec.yaml",
+      "packages/sim_update/pubspec.yaml",
+      "packages/ui_kit/pubspec.yaml",
+      "pdv/pubspec.yaml"
+    ],
+    "dotnet": [],
+    "java": [
+      "distributeur/android/app/build.gradle.kts",
+      "distributeur/android/build.gradle.kts",
+      "distributeur/android/settings.gradle.kts",
+      "packages/sim_update/android/build.gradle",
+      "packages/sim_update/android/settings.gradle",
+      "pdv/android/app/build.gradle.kts",
+      "pdv/android/build.gradle.kts",
+      "pdv/android/settings.gradle.kts"
+    ],
+    "docker": []
+  },
+  "existing_docs": [
+    "AGENTS.md",
+    "docs/STACK.md",
+    "docs/architecture",
+    "docs/contracts",
+    "docs/adr",
+    "docs/runbooks",
+    "README.md"
+  ],
+  "diagnostics": [],
+  "adapter_summary": {
+    "capability_count": 14,
+    "agent_count": 24,
+    "ownership_count": 10,
+    "protected_path_count": 0,
+    "tier3_operation_count": 0,
+    "mcp_count": 0,
+    "verification_command_count": 7,
+    "deployment_providers": [
+      "supabase"
+    ],
+    "contradiction_count": 12
+  },
+  "adapter_validation": {
+    "valid": true,
+    "issues": []
+  },
+  "adapter_contradictions": [
+    {
+      "type": "capability_agent_conflict",
+      "capability": "architect",
+      "message": "Capability architect maps to agents architect vs activate-architect",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/01-architect.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "backend-api",
+      "message": "Capability backend-api maps to agents backend-api vs activate-backend-api",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/02-backend-api.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "frontend-ui",
+      "message": "Capability frontend-ui maps to agents frontend-ui vs activate-frontend-ui",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/03-frontend-ui.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "mobile",
+      "message": "Capability mobile maps to agents mobile vs activate-mobile",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/04-mobile.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "data-db",
+      "message": "Capability data-db maps to agents data-db vs activate-data-db",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/05-data-db.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "devops-release",
+      "message": "Capability devops-release maps to agents devops-release vs activate-devops-release",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/06-devops-release.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "qa-bugfix",
+      "message": "Capability qa-bugfix maps to agents qa-bugfix vs activate-qa-bugfix",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/07-qa-bugfix.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "docs-sync",
+      "message": "Capability docs-sync maps to agents docs-sync vs activate-docs-sync",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/08-docs-sync.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "security",
+      "message": "Capability security maps to agents security vs activate-security",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/09-security.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "performance",
+      "message": "Capability performance maps to agents performance vs activate-performance",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/11-performance.md"
+      ]
+    },
+    {
+      "type": "ownership_conflict",
+      "path": "admin-web/",
+      "message": "Path admin-web/ owned by admin-web vs production",
+      "sources": [
+        "docs/map/ownership.md",
+        "docs/map/repository-map.md"
+      ]
+    },
+    {
+      "type": "ownership_conflict",
+      "path": "admin/",
+      "message": "Path admin/ owned by quarantine vs retired",
+      "sources": [
+        "docs/map/ownership.md",
+        "docs/map/repository-map.md"
+      ]
+    }
+  ],
+  "proposed_adapter": {
+    "summary": {
+      "capability_count": 14,
+      "agent_count": 24,
+      "ownership_count": 10,
+      "protected_path_count": 0,
+      "tier3_operation_count": 0,
+      "mcp_count": 0,
+      "verification_command_count": 7,
+      "deployment_providers": [
+        "supabase"
+      ],
+      "contradiction_count": 12
+    },
+    "capabilities": 14,
+    "agents": [
+      "architect",
+      "backend-api",
+      "frontend-ui",
+      "mobile",
+      "data-db",
+      "devops-release",
+      "qa-bugfix",
+      "docs-sync",
+      "security",
+      "safe-cleanup",
+      "performance",
+      "feature-delivery",
+      "activate-architect",
+      "activate-backend-api",
+      "activate-frontend-ui",
+      "activate-mobile",
+      "activate-data-db",
+      "activate-devops-release",
+      "activate-qa-bugfix",
+      "activate-docs-sync",
+      "activate-security",
+      "activate-safe-cleanup-refactor",
+      "activate-performance",
+      "activate-product-feature-delivery"
+    ],
+    "tier3_operations": [],
+    "mcp": [],
+    "verification_commands": 7,
+    "deployment": {
+      "providers": [
+        "supabase"
+      ],
+      "targets": [
+        {
+          "component": "database",
+          "provider": "supabase",
+          "config": "supabase/migrations/"
+        }
+      ],
+      "source": "repository deploy configs"
+    }
+  },
+  "contradictions": [
+    {
+      "type": "capability_agent_conflict",
+      "capability": "architect",
+      "message": "Capability architect maps to agents architect vs activate-architect",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/01-architect.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "backend-api",
+      "message": "Capability backend-api maps to agents backend-api vs activate-backend-api",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/02-backend-api.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "frontend-ui",
+      "message": "Capability frontend-ui maps to agents frontend-ui vs activate-frontend-ui",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/03-frontend-ui.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "mobile",
+      "message": "Capability mobile maps to agents mobile vs activate-mobile",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/04-mobile.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "data-db",
+      "message": "Capability data-db maps to agents data-db vs activate-data-db",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/05-data-db.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "devops-release",
+      "message": "Capability devops-release maps to agents devops-release vs activate-devops-release",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/06-devops-release.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "qa-bugfix",
+      "message": "Capability qa-bugfix maps to agents qa-bugfix vs activate-qa-bugfix",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/07-qa-bugfix.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "docs-sync",
+      "message": "Capability docs-sync maps to agents docs-sync vs activate-docs-sync",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/08-docs-sync.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "security",
+      "message": "Capability security maps to agents security vs activate-security",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/09-security.md"
+      ]
+    },
+    {
+      "type": "capability_agent_conflict",
+      "capability": "performance",
+      "message": "Capability performance maps to agents performance vs activate-performance",
+      "sources": [
+        "docs/agents/SPECIALISTS.md",
+        "docs/agents/task-playbooks/11-performance.md"
+      ]
+    },
+    {
+      "type": "ownership_conflict",
+      "path": "admin-web/",
+      "message": "Path admin-web/ owned by admin-web vs production",
+      "sources": [
+        "docs/map/ownership.md",
+        "docs/map/repository-map.md"
+      ]
+    },
+    {
+      "type": "ownership_conflict",
+      "path": "admin/",
+      "message": "Path admin/ owned by quarantine vs retired",
+      "sources": [
+        "docs/map/ownership.md",
+        "docs/map/repository-map.md"
+      ]
+    }
+  ],
+  "planned_actions": [
+    {
+      "action": "create",
+      "path": ".agent-os/project.yaml",
+      "reason": "project adapter"
+    },
+    {
+      "action": "create",
+      "path": "docs/project/tasks/index.yaml",
+      "reason": "task store skeleton"
+    },
+    {
+      "action": "create",
+      "path": ".cursor/agents/registry.yaml",
+      "reason": "project capability stub"
+    },
+    {
+      "action": "create",
+      "path": ".cursor/hooks.json",
+      "reason": "wire project policy hooks"
+    }
+  ],
+  "dry_run": true,
+  "apply_adapter": false
+}

@@ -1,0 +1,8 @@
+# Release readiness assessment schema
+
+release_readiness:
+  status: READY | NOT_READY | BLOCKED
+  blockers: []
+  warnings: []
+  evidence: []
+  assessed_at: ISO8601

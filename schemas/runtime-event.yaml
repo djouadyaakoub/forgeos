@@ -1,0 +1,20 @@
+# Host-neutral runtime event model
+
+runtime_event:
+  type: tool_call | shell | mcp | agent_start | agent_end | user_request
+
+  host:
+    id: ""
+    name: ""
+
+  project:
+    path: ""
+
+  task:
+    id: ""
+
+  actor:
+    type: user | orchestrator | specialist
+    id: ""
+
+  payload: {}

@@ -1,0 +1,201 @@
+﻿{
+  "project_dir": "C:\\Apps\\sim-activation",
+  "project_kind": "EXISTING_PROJECT",
+  "agent_os_initialized": false,
+  "existing_project": true,
+  "mode": "EXISTING_PROJECT",
+  "initialized": true,
+  "stack": {
+    "repository": {
+      "go": false,
+      "node": true,
+      "python": true,
+      "rust": false,
+      "flutter": true,
+      "dotnet": false,
+      "java": true,
+      "docker": false
+    },
+    "components": {
+      "admin-web": {
+        "go": false,
+        "node": true,
+        "python": false,
+        "rust": false,
+        "flutter": false,
+        "dotnet": false,
+        "java": false,
+        "docker": false
+      },
+      "tools": {
+        "go": false,
+        "node": true,
+        "python": true,
+        "rust": false,
+        "flutter": false,
+        "dotnet": false,
+        "java": false,
+        "docker": false
+      },
+      "admin": {
+        "go": false,
+        "node": false,
+        "python": false,
+        "rust": false,
+        "flutter": true,
+        "dotnet": false,
+        "java": false,
+        "docker": false
+      },
+      "distributeur": {
+        "go": false,
+        "node": false,
+        "python": false,
+        "rust": false,
+        "flutter": true,
+        "dotnet": false,
+        "java": true,
+        "docker": false
+      },
+      "packages": {
+        "go": false,
+        "node": false,
+        "python": false,
+        "rust": false,
+        "flutter": true,
+        "dotnet": false,
+        "java": true,
+        "docker": false
+      },
+      "pdv": {
+        "go": false,
+        "node": false,
+        "python": false,
+        "rust": false,
+        "flutter": true,
+        "dotnet": false,
+        "java": true,
+        "docker": false
+      }
+    }
+  },
+  "stack_evidence": {
+    "go": [],
+    "node": [
+      "admin-web/package-lock.json",
+      "admin-web/package.json",
+      "tools/download-worker/package.json"
+    ],
+    "python": [
+      "tools/photo_hce_test/requirements.txt"
+    ],
+    "rust": [],
+    "flutter": [
+      "admin/pubspec.yaml",
+      "distributeur/pubspec.yaml",
+      "packages/cnibe_hce/pubspec.yaml",
+      "packages/secure_session/pubspec.yaml",
+      "packages/sim_update/pubspec.yaml",
+      "packages/ui_kit/pubspec.yaml",
+      "pdv/pubspec.yaml"
+    ],
+    "dotnet": [],
+    "java": [
+      "distributeur/android/app/build.gradle.kts",
+      "distributeur/android/build.gradle.kts",
+      "distributeur/android/settings.gradle.kts",
+      "packages/sim_update/android/build.gradle",
+      "packages/sim_update/android/settings.gradle",
+      "pdv/android/app/build.gradle.kts",
+      "pdv/android/build.gradle.kts",
+      "pdv/android/settings.gradle.kts"
+    ],
+    "docker": []
+  },
+  "existing_docs": [
+    "AGENTS.md",
+    "docs/STACK.md",
+    "docs/architecture",
+    "docs/contracts",
+    "docs/adr",
+    "docs/runbooks",
+    "README.md"
+  ],
+  "diagnostics": [],
+  "adapter_summary": {
+    "capability_count": 0,
+    "agent_count": 0,
+    "ownership_count": 0,
+    "protected_path_count": 0,
+    "tier3_operation_count": 0,
+    "mcp_count": 0,
+    "verification_command_count": 0,
+    "deployment_providers": [
+      "supabase"
+    ],
+    "contradiction_count": 0
+  },
+  "adapter_validation": {
+    "valid": true,
+    "issues": []
+  },
+  "adapter_contradictions": [],
+  "proposed_adapter": {
+    "summary": {
+      "capability_count": 0,
+      "agent_count": 0,
+      "ownership_count": 0,
+      "protected_path_count": 0,
+      "tier3_operation_count": 0,
+      "mcp_count": 0,
+      "verification_command_count": 0,
+      "deployment_providers": [
+        "supabase"
+      ],
+      "contradiction_count": 0
+    },
+    "capabilities": 0,
+    "agents": [],
+    "tier3_operations": [],
+    "mcp": [],
+    "verification_commands": 0,
+    "deployment": {
+      "providers": [
+        "supabase"
+      ],
+      "targets": [
+        {
+          "component": "database",
+          "provider": "supabase",
+          "config": "supabase/migrations/"
+        }
+      ],
+      "source": "repository deploy configs"
+    }
+  },
+  "contradictions": [],
+  "planned_actions": [
+    {
+      "action": "create",
+      "path": ".agent-os/project.yaml",
+      "reason": "project adapter"
+    },
+    {
+      "action": "create",
+      "path": "docs/project/tasks/index.yaml",
+      "reason": "task store skeleton"
+    },
+    {
+      "action": "create",
+      "path": ".cursor/agents/registry.yaml",
+      "reason": "project capability stub"
+    },
+    {
+      "action": "create",
+      "path": ".cursor/hooks.json",
+      "reason": "wire project policy hooks"
+    }
+  ],
+  "dry_run": true,
+  "apply_adapter": false
+}
