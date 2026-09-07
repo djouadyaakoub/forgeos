@@ -1,7 +1,7 @@
 schema_version: 1
 
 agent_os:
-  version: ">=1.0 <2.0"
+  version: ">=2.0 <3.0"
 
 project:
   id: sample-project

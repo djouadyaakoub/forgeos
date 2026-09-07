@@ -1,0 +1,63 @@
+schema_id: forgeos-capability-operation
+schema_version: 1
+
+# Stage 14 capability operation — governed specification, not an execution engine.
+
+fields:
+  schema:
+    type: string
+    value: forgeos-capability-operation
+  id:
+    type: string
+    required: true
+  capability_id:
+    type: string
+    required: true
+  name:
+    type: string
+  description:
+    type: string
+  operation_type:
+    type: enum
+    values: [remediation, analysis, planning, documentation]
+  risk:
+    type: enum
+    values: [LOW, MEDIUM, HIGH, CRITICAL]
+  scope:
+    type: object
+    required: true
+  prerequisites:
+    type: array
+  expected_effects:
+    type: array
+  verification_strategy:
+    type: enum
+    values: [none, presence, project_verification_commands]
+  implementation_types:
+    type: array
+  preferred_implementation:
+    type: enum
+    values: [host_native, forgeos_native, oss_backed]
+  applies_to_finding_types:
+    type: array
+  operation_fingerprint:
+    type: string
+  claims_policy_authority:
+    type: boolean
+    value: false
+  may_execute:
+    type: boolean
+    value: false
+  auto_execute:
+    type: boolean
+    value: false
+
+authority:
+  operation: specification_only
+  policy: not_granted
+  execution: forbidden
+  project_intelligence: not_granted
+  canvas: not_granted
+
+distinctions:
+  - CAPABILITY ≠ FINDING ≠ OPERATION ≠ TASK ≠ AGENT ≠ RUNTIME

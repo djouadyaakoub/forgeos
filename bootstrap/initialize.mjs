@@ -5,17 +5,27 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { buildProjectProfile, findContradictions } from './project-discovery.mjs';
 import { adapterToYaml } from './adapter-extraction.mjs';
 import { loadProjectManifest } from '../policy/project-adapter.mjs';
+import { installPortablePolicyHooks } from '../policy/portable-hooks.mjs';
+import { prepareHostProject } from '../host/preparation.mjs';
 
-const PLUGIN_ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const args = process.argv.slice(2);
 const dryRun = args.includes('--dry-run');
 const applyAdapter = args.includes('--apply-adapter');
 const projectDirIdx = args.indexOf('--project-dir');
 const projectDir = projectDirIdx >= 0 ? path.resolve(args[projectDirIdx + 1]) : process.cwd();
+
+// Explicit host-native preparation is separate from legacy Cursor hook installation.
+if (args.includes('--prepare-host')) {
+  const hostIndex = args.indexOf('--host');
+  const result = prepareHostProject({ project_dir: projectDir,
+    host_id: hostIndex >= 0 ? (args[hostIndex + 1] || '') : undefined,
+    apply: args.includes('--apply') && !dryRun });
+  console.log(JSON.stringify(result, null, 2));
+  process.exit(result.ok ? 0 : 1);
+}
 
 function slugFromDir(dir) {
   return path.basename(dir).toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -50,8 +60,16 @@ function buildManifest(profile, metaOverrides = {}) {
 
   return `schema_version: 1
 
+contract:
+  version: 1
+
 agent_os:
-  version: ">=1.0 <2.0"
+  version: ">=2.0 <3.0"
+  adapter_schema_version: 1
+
+forgeos:
+  version: ">=2.0 <3.0"
+  adapter_schema_version: 1
 
 project:
   id: ${id}
@@ -79,6 +97,10 @@ knowledge:
 
 capabilities: []
 
+agents: {}
+
+ownership: []
+
 policy:
   protected_paths: []
   tier3_operations: []
@@ -88,6 +110,9 @@ integrations:
 
 verification:
   commands: []
+
+runtime:
+  requirements: {}
 `;
 }
 
@@ -151,17 +176,14 @@ function applyBootstrap(profile, actions) {
       );
       created.push(a.path);
     } else if (a.path === '.cursor/hooks.json') {
-      const hookTemplate = {
-        version: 1,
-        hooks: {
-          subagentStart: [{ command: `node "${path.join(PLUGIN_ROOT, 'policy/hooks/policy-subagent-start.mjs').replace(/\\/g, '/')}"` }],
-          preToolUse: [{ command: `node "${path.join(PLUGIN_ROOT, 'policy/hooks/policy-pre-tool.mjs').replace(/\\/g, '/')}"`, matcher: 'Shell|Write|StrReplace|Delete|ApplyPatch', failClosed: true }],
-          beforeShellExecution: [{ command: `node "${path.join(PLUGIN_ROOT, 'policy/hooks/policy-shell.mjs').replace(/\\/g, '/')}"`, failClosed: true }],
-          beforeMCPExecution: [{ command: `node "${path.join(PLUGIN_ROOT, 'policy/hooks/policy-mcp.mjs').replace(/\\/g, '/')}"`, failClosed: true }],
-        },
-      };
-      fs.writeFileSync(full, JSON.stringify(hookTemplate, null, 2), 'utf8');
+      // Architecture 2.0 Stage 2: portable shims only — no absolute plugin paths.
+      // Same authority path as integrate-runtime → Policy Authority (forgeos).
+      installPortablePolicyHooks(projectDir, {
+        integrated_by: 'bootstrap/initialize.mjs',
+      });
       created.push(a.path);
+      created.push('.cursor/hooks/agent-os/');
+      created.push('.agent-os/runtime.yaml');
     }
   }
 

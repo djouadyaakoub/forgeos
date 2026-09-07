@@ -1,8 +1,12 @@
 /**
- * Cursor adapter — bridges Cursor hook payloads to ForgeOS runtime events
+ * Cursor adapter — translates Cursor hook payloads; does not authorize.
+ *
+ * Authorization always belongs to ForgeOS Policy Authority:
+ *   Cursor event → normalize → PolicyAuthority.evaluate → host enforce
  */
 import { createRuntimeEvent } from '../../runtime/interface.mjs';
 import { getHostAdapter } from '../../runtime/host-registry.mjs';
+import { PolicyAuthority, evaluatePreToolUse, evaluateShell, evaluateMcp } from '../../policy/authority.mjs';
 
 const CURSOR_HOST = getHostAdapter('cursor');
 
@@ -29,8 +33,25 @@ export function normalizeCursorHookPayload(hookInput = {}) {
   });
 }
 
+/**
+ * Translate a Cursor hook payload into a ForgeOS policy decision.
+ * Host must enforce the returned permission; must not override DENY.
+ */
+export function evaluateCursorHook(hookInput = {}) {
+  if (hookInput.command != null && !hookInput.tool_name) {
+    return evaluateShell(hookInput.command);
+  }
+  if (hookInput.mcp_server_name || hookInput.mcp) {
+    return evaluateMcp(
+      hookInput.mcp_server_name || hookInput.server || '',
+      hookInput.tool_name || hookInput.mcp_tool || ''
+    );
+  }
+  return evaluatePreToolUse(hookInput);
+}
+
 export function getCursorAdapterManifest() {
   return CURSOR_HOST;
 }
 
-export { CURSOR_HOST };
+export { CURSOR_HOST, PolicyAuthority };

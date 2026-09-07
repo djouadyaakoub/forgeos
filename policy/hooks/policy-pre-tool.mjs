@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { evaluatePreToolUse, hookOutput, readStdinJson } from '../engine.mjs';
+import { evaluatePreToolUse, hookOutput, readStdinJson } from '../authority.mjs';
 import { initHookRuntime } from '../runtime.mjs';
 
 try {
@@ -13,6 +13,7 @@ try {
   process.stdout.write(
     JSON.stringify({
       permission: 'deny',
+      authority: 'forgeos',
       user_message: 'Policy hook error — action blocked (fail closed).',
       agent_message: `policy-pre-tool error: ${err.message}`,
     })

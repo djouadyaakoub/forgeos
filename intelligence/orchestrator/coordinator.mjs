@@ -133,3 +133,6 @@ export {
 } from './execution.mjs';
 
 export { planDevelopmentIntelligenceWorkflow, formatWorkflowSummary } from './planner.mjs';
+
+/** Stage 6 control-plane closure — planner → executeGoverned */
+export { coordinateGovernedExecution } from './governed.mjs';

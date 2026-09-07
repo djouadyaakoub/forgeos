@@ -1,0 +1,34 @@
+schema_id: forgeos-project-knowledge
+schema_version: 1
+validator: intelligence/assessment/knowledge.mjs
+facts:
+  source: collector_only
+  immutable: deeply_frozen_in_process
+  contains: [workspace, project_id, configuration_fingerprint, filesystem, structural, graph, analysis_scope, provenance, fingerprint]
+interpretations:
+  required: [id, kind, text, workspace, based_on_fact_fingerprint, confidence, evidence_refs, provenance]
+  kinds: [hypothesis, conclusion, learning]
+  states: [CURRENT, STALE, QUARANTINED, INVALID]
+  confidence: bounded_zero_to_one
+  authoritative: false
+  unknown_fields: rejected
+  promotion_to_facts: prohibited
+  project_local_optional_file: .agent-os/interpretations.json
+analysis_scope:
+  fields: [included, omitted, unsupported, truncated, status, limits]
+  note: Partial analysis is not complete semantic project understanding.
+policy_authority: false
+verification_authority: false
+lifecycle:
+  validator: intelligence/assessment/knowledge-lifecycle.mjs
+  project_local_store: .agent-os/knowledge/records.json
+  review_states: [UNREVIEWED, ACCEPTED, REJECTED]
+  freshness_states: [CURRENT, STALE, QUARANTINED, INVALID]
+  required_extra_fields: [scope, reviews, lineage]
+  lineage: nullable_task_execution_evidence_scope_binding
+  acceptance: explicit_human_operator_assertion_not_writer
+  rejection: explicit_human_or_agent
+  accepted_is_fact: false
+  accepted_is_instruction: false
+  retrieval: current_accepted_relevant_only
+  limits: {records: 256, store_bytes: 1048576, text_characters: 4000, reviews: 64, retrieval_items: 20, retrieval_item_bytes: 32000}

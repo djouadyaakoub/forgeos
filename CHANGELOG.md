@@ -1,6 +1,33 @@
 # Changelog
 
-All notable changes to Universal Cursor Agent OS follow [Semantic Versioning](https://semver.org/).
+All notable changes to ForgeOS follow [Semantic Versioning](https://semver.org/).
+
+## [2.0.0-rc.1] - 2026-09-07
+
+- Host-independent Project Intelligence, Policy, task scope, orchestration and derived evidence/Canvas.
+- Codex, Cursor and Claude Code are peer interactive HOST_NATIVE adapters in the existing workspace; no vendor agent launcher is implied.
+- Unified init/status/next/complete, knowledge review/recall, inert discovery, host and context benchmark CLI; Node bin mapping.
+- Documentation completion rechecks scoped findings; capabilities without sufficient acceptance contracts remain UNKNOWN/PARTIAL rather than accepting arbitrary markers.
+- MINIMAL/SCOPED read-only context and conservative FULL preparation. Context-byte metrics are not guaranteed token savings; vendor token telemetry is unavailable.
+- Deterministic RC source inclusion, isolated test fixtures and extracted-package validation. Maintainer project state is excluded from consumer distribution.
+- Exact Tier-3 approval binds normalized input, task, capability, operation, workspace and current scope; supported Local Executor push dispatch consumes approval once before effect. Replay and changed inputs reject.
+- Reviewed knowledge lifecycle and inert capability-discovery metadata stay below deterministic facts and never grant authority.
+- Full SemVer prerelease ordering supports RC progression and stable promotion while blocking normal downgrades.
+- RC limitations: unsupported recognized high-risk dispatch paths fail closed; arbitrary interactive host actions are not universally intercepted. Approval is not execution success or verification PASS. OpenHands is optional; no mandatory Docker or live-runtime certification is implied.
+- Existing projects with a 1.x-only compatibility range require explicit major-version review; new project templates target the 2.x line. This is not stable 2.0.0.
+
+## [1.0.1] - 2026-09-03
+
+### Fixed
+- Release ZIP now includes `templates/` (required `templates/runtime/hook-shim.mjs` for `integrate-runtime`)
+- Installer integrity requires the runtime hook shim (`bootstrap/install-from-release.mjs`)
+- Project YAML empty-list round-trip: list fields serialize/parse as arrays (`[]`), not `{}` or `"[]"`
+- Manifest load normalizes known list-valued Project Intelligence Contract fields
+- `discoverCapabilities` fail-closed if capabilities is not an array
+- Release validation now builds the artifact and runs an extracted-release consumer E2E (install → bootstrap → integrate → policy → orchestrator)
+
+### Security
+- No policy weakening; single ForgeOS policy authority unchanged
 
 ## [1.0.0] - 2026-09-02
 

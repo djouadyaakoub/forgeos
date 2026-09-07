@@ -9,7 +9,7 @@ import { validateReleaseManifest, verifySourceAuthenticity } from './authenticit
 import { verifySha256 } from '../../scripts/security/checksum.mjs';
 import { acquireUpdateLock, releaseUpdateLock } from './lock.mjs';
 import { verifyUpdate } from './manager.mjs';
-import { compareSemver } from '../../policy/version.mjs';
+import { compareSemver, parseSemver } from '../../policy/version.mjs';
 
 const BACKUP_ROOT = path.join(os.homedir(), '.cursor', 'agent-os', 'backups');
 
@@ -78,6 +78,20 @@ export function validateStagedRelease(stagedPath, options = {}) {
   };
 }
 
+/** Ordering prerequisite only: success cannot bypass authenticity or activation gates. */
+export function evaluateActivationVersionOrder(current, target, options = {}) {
+  try {
+    parseSemver(target);
+    const comparison = current == null ? null : compareSemver(target,current);
+    if (comparison < 0 && !options.allow_downgrade)
+      return {status:'BLOCKED',reason:'downgrade_not_allowed',current,target,blocked:true};
+    return {blocked:false,comparison};
+  } catch(e) {
+    if(e.code !== 'INVALID_SEMVER')throw e;
+    return {status:'BLOCKED',reason:'invalid_semver',current,target,blocked:true};
+  }
+}
+
 export function activateRelease(stagedPath, options = {}) {
   const lock = acquireUpdateLock({ phase: 'activate' });
   if (!lock.acquired) {
@@ -86,27 +100,17 @@ export function activateRelease(stagedPath, options = {}) {
 
   try {
     const installPath = getInstallManifestPath();
-    let currentVersion = options.current_version || null;
-    if (!currentVersion && fs.existsSync(installPath)) {
+    let currentVersion = options.current_version ?? null;
+    if (currentVersion == null && fs.existsSync(installPath)) {
       currentVersion = JSON.parse(fs.readFileSync(installPath, 'utf8')).version;
     }
 
-    const targetVersion = options.version || JSON.parse(
+    const targetVersion = options.version ?? JSON.parse(
       fs.readFileSync(path.join(stagedPath, 'release/release-manifest.json'), 'utf8')
     ).release.version;
 
-    if (!options.allow_downgrade && currentVersion) {
-      const cmp = compareSemver(targetVersion, currentVersion);
-      if (cmp < 0) {
-        return {
-          status: 'BLOCKED',
-          reason: 'downgrade_not_allowed',
-          current: currentVersion,
-          target: targetVersion,
-          blocked: true,
-        };
-      }
-    }
+    const ordering = evaluateActivationVersionOrder(currentVersion,targetVersion,options);
+    if (ordering.blocked) return ordering;
 
     const validation = validateStagedRelease(stagedPath, options);
     if (!validation.valid) {

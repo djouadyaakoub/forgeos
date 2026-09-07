@@ -1,0 +1,79 @@
+# Runtime Backend Interface Schema (conceptual)
+
+schema_version: 1
+contract_version: "1"
+kind: runtime_backend_interface
+
+description: >
+  Contract-only schema for Architecture 2.0 Stage 3.
+  Not a second policy engine. Host adapters are out of scope here.
+
+required_identity:
+  - id
+  - name
+  - version
+
+required_methods:
+  - health
+  - canHandle
+  - start
+  - cancel
+  - collectEvidence
+
+capabilities:
+  type: object
+  fields:
+    interactive: boolean
+    autonomous: boolean
+    sandbox: boolean
+    parallel: boolean
+    pr_delivery: boolean
+    hooks_callback: boolean
+    cost_telemetry: boolean
+    languages: array_of_string
+  notes: Capabilities are not permissions and never imply authorization.
+
+health_statuses:
+  - healthy
+  - unhealthy
+  - unavailable
+  - unknown
+
+run_request:
+  required:
+    - task_id
+    - policy_decision
+  policy_decision:
+    authority: forgeos
+    decision: [allow, deny]
+  notes: >
+    policy_decision.authority must be forgeos.
+    Runtime must not claim authorization authority.
+
+run_handle:
+  required:
+    - run_id
+    - task_id
+    - backend_id
+    - status
+
+runtime_error_codes:
+  - RUNTIME_UNAVAILABLE
+  - RUNTIME_UNHEALTHY
+  - UNSUPPORTED_REQUEST
+  - START_FAILED
+  - CANCEL_FAILED
+  - EVIDENCE_UNAVAILABLE
+  - VERIFICATION_INCOMPLETE
+  - CONTRACT_INVALID
+  - TASK_MISMATCH
+
+policy_law:
+  - forgeos_deny_cannot_be_overridden
+  - forgeos_allow_plus_runtime_deny_equals_deny
+
+non_goals:
+  - runtime_router
+  - backend_selection
+  - cline_openhands_codex_claude_adapters
+  - agent_refactor

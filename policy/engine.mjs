@@ -10,7 +10,8 @@ import {
   getTasksBasePath,
   getTaskIdPattern,
 } from './project-adapter.mjs';
-import { POLICY_AUTHORITY } from './runtime.mjs';
+import { POLICY_AUTHORITY } from './identity.mjs';
+import { validateExactApproval } from './exact-approval.mjs';
 import {
   getEphemeralAgentConfig,
   isEphemeralAgentId,
@@ -186,6 +187,7 @@ export function evaluateApprovalForOperation(operation, taskId = null) {
   }
   const approved = findApprovalForTask(taskId, operation);
   if (approved) {
+    if (loadRules().tier_3_operations.includes(operation)) return {permission:'deny',reason:'tier3_exact_approval_required',task_id:taskId};
     return { permission: 'allow', task_id: approved.task_id, reason: 'approved_scope_match' };
   }
   return { permission: 'deny', reason: 'no_approved_scope_match' };
@@ -193,7 +195,11 @@ export function evaluateApprovalForOperation(operation, taskId = null) {
 
 export function appendAudit(entry) {
   const auditPath = path.join(projectDir(), '.cursor/policy/audit.log');
-  const line = JSON.stringify({ ...entry, timestamp: new Date().toISOString() });
+  const line = JSON.stringify({
+    ...entry,
+    authority: entry.authority || POLICY_AUTHORITY,
+    timestamp: new Date().toISOString(),
+  });
   fs.mkdirSync(path.dirname(auditPath), { recursive: true });
   fs.appendFileSync(auditPath, line + '\n');
 }
@@ -235,18 +241,28 @@ function isProtectedPath(relPath) {
   });
 }
 
-function classifyShellOperation(command) {
+export function classifyShellOperation(command) {
   const rules = loadRules();
   const cmd = String(command || '');
-  for (const rule of rules.shell_rules || []) {
+  // More specific force-push category precedes ordinary push. Quote removal is
+  // conservative risk detection ONLY; exact normalization still rejects quotes.
+  const ordered = [...(rules.shell_rules || [])].sort((a,b) => Number(b.operation==='git_force_push')-Number(a.operation==='git_force_push'));
+  for (const rule of ordered) {
     for (const pat of rule.patterns || []) {
-      if (new RegExp(pat, 'i').test(cmd)) return rule;
+      if (new RegExp(pat, 'i').test(cmd) || new RegExp(pat, 'i').test(cmd.replace(/["']/g,''))) return rule;
     }
+  }
+  // Recognize alternate direct Git spellings conservatively, without parsing a shell.
+  // Their execution is unsupported by exact normalization and must not fall through.
+  const riskText = cmd.replace(/["']/g,'');
+  if (/\bgit(?:\.exe)?\b[^\r\n]*\bpush\b/i.test(riskText)) {
+    const operation = /(?:--force|-f)\b|\+/.test(riskText) ? 'git_force_push' : 'git_push';
+    return (rules.shell_rules || []).find(r=>r.operation===operation) || null;
   }
   return null;
 }
 
-function classifyMcpOperation(serverName, toolName) {
+export function classifyMcpOperation(serverName, toolName) {
   const rules = loadRules();
   for (const rule of rules.mcp_rules || []) {
     if (!rule.server_names.includes(serverName)) continue;
@@ -273,14 +289,26 @@ function checkTier3Approval(operation, opTier, agentId, session, context = {}) {
   }
 
   const approved = findApprovalForTask(currentTaskId, operation);
-  const result = approved ? 'allow' : 'deny';
   const reason = approved
     ? `Tier 3 operation '${operation}' allowed by task ${approved.task_id} approval scope.`
     : `Tier 3 operation '${operation}' blocked for task ${currentTaskId} — requires approval.status: approved with exact scope '${operation}'.`;
 
-  appendAudit({ type: 'approval_check', task_id: currentTaskId, operation, agent_id: agentId, requested: true, result, reason, ...context });
-
-  if (approved) return { permission: 'allow', reason, task_id: currentTaskId };
+  if (approved) {
+    const exact = context.exact;
+    let decision;
+    if (!exact) decision = { permission:'deny', reason:'tier3_exact_approval_required', task_id:currentTaskId,
+      enforcement:'UNSUPPORTED_DISPATCH_INTERCEPTION', user_message:'Tier 3 requires exact approval and ForgeOS-controlled dispatch.' };
+    else {
+    const checked = validateExactApproval({ ...exact, task_id:currentTaskId, project_dir:projectDir(), action:operation,
+      event:{tool_name:'Shell',tool_input:{command:context.command}} });
+    decision = checked.ok ? {permission:'allow',reason:'exact_approval_validated_not_consumed',task_id:currentTaskId,operation}
+      : {permission:'deny',reason:checked.reason,task_id:currentTaskId};
+    }
+    appendAudit({type:'approval_check',task_id:currentTaskId,operation,agent_id:agentId,requested:true,
+      result:decision.permission,reason:decision.reason});
+    return decision;
+  }
+  appendAudit({type:'approval_check',task_id:currentTaskId,operation,agent_id:agentId,requested:true,result:'deny',reason});
   return {
     permission: 'deny',
     user_message: `Blocked: ${operation} requires task ${currentTaskId} approval.`,
@@ -339,7 +367,7 @@ function checkPathWrite(relPath, agentId, session = null) {
   return { permission: 'allow', reason: 'path_ok' };
 }
 
-export function evaluateShell(command, session = null) {
+export function evaluateShell(command, session = null, exact = null) {
   const sess = resolveSession(session);
   const agentId = resolveAgentId(sess);
   const op = classifyShellOperation(command);
@@ -351,7 +379,7 @@ export function evaluateShell(command, session = null) {
     return { permission: 'allow', reason: 'no_tier3_match' };
   }
 
-  if (op.tier >= 3) return checkTier3Approval(op.operation, op.tier, agentId, sess, { command });
+  if (op.tier >= 3) return checkTier3Approval(op.operation, op.tier, agentId, sess, { command, exact });
   return { permission: 'allow', reason: 'tier_below_3' };
 }
 
@@ -366,12 +394,12 @@ export function evaluateMcp(serverName, toolName, session = null) {
   return { permission: 'allow', reason: 'tier_below_3' };
 }
 
-export function evaluatePreToolUse(input) {
+export function evaluatePreToolUse(input, session = null) {
   if (input?.__parse_error) {
     return { permission: 'deny', user_message: 'Blocked: hook input could not be parsed — fail closed.', agent_message: 'Hook stdin JSON parse failed.', reason: 'hook_input_parse_error' };
   }
 
-  const sess = resolveSession(null);
+  const sess = resolveSession(session);
   const agentId = resolveAgentId(sess);
   const toolName = input?.tool_name || '';
 

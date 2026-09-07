@@ -2,6 +2,15 @@
  * ForgeOS runtime interface — host-neutral abstractions
  *
  * Host Adapter → Runtime Interface → ForgeOS Core
+ *
+ * NOTE (Architecture 2.0 Stage 3):
+ * This file is the **Host Adapter** event / agent / tool-provider boundary.
+ * It is NOT the Runtime Backend Interface.
+ *
+ * Runtime Backend contract (execution backends): `runtime/backend-interface.mjs`
+ * Host registry (Cursor / CLI / generic): `runtime/host-registry.mjs`
+ *
+ * Cursor remains a Host Adapter. It is not claimed as a Runtime Backend here.
  */
 import { PRODUCT_ID, POLICY_AUTHORITY } from '../policy/identity.mjs';
 

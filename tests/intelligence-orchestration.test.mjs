@@ -341,7 +341,7 @@ test('sample-project uses only its capabilities', () => {
 
 console.log('\n--- Speed Flexy read-only ---');
 test('Speed Flexy E2E planner read-only', () => {
-  if (!fs.existsSync(SPEED_FLEXY)) return;
+  if (process.env.FORGEOS_LIVE_PROJECT_TESTS !== '1' || !fs.existsSync(SPEED_FLEXY)) return;
   const before = fs.statSync(path.join(SPEED_FLEXY, '.agent-os/project.yaml')).mtimeMs;
   const result = coordinateDevelopmentWorkflow({
     project_dir: SPEED_FLEXY,

@@ -66,7 +66,7 @@ console.log('Bootstrap Stack Detection Tests\n');
 // Test 1 — Speed Flexy reference (skip if unavailable)
 console.log('--- Test 1: Speed Flexy reference ---');
 test('Speed Flexy detects Go, Flutter, Node from repository evidence', () => {
-  if (!fs.existsSync(SPEED_FLEXY)) throw new Error('SKIP: Speed Flexy path not available');
+  if (process.env.FORGEOS_LIVE_PROJECT_TESTS !== '1' || !fs.existsSync(SPEED_FLEXY)) { console.log('  SKIP: live project opt-in/path unavailable'); return; }
   const stack = detectStackDetail(SPEED_FLEXY);
   assert(stack.repository.go, `go false; evidence: ${stack.evidence.go?.join(', ')}`);
   assert(stack.repository.flutter, `flutter false; evidence: ${stack.evidence.flutter?.join(', ')}`);

@@ -322,7 +322,7 @@ test('global rules include new agents', () => {
 
 console.log('\n--- Speed Flexy read-only validation ---');
 test('Speed Flexy structure audit (read-only)', () => {
-  if (!fs.existsSync(SPEED_FLEXY)) {
+  if (process.env.FORGEOS_LIVE_PROJECT_TESTS !== '1' || !fs.existsSync(SPEED_FLEXY)) {
     console.log('    SKIP  Speed Flexy not found');
     return;
   }
@@ -338,7 +338,7 @@ test('Speed Flexy structure audit (read-only)', () => {
   assert(hasBackend !== undefined, 'audit completed');
 });
 test('Speed Flexy research not written to Global OS', () => {
-  if (!fs.existsSync(SPEED_FLEXY)) return;
+  if (process.env.FORGEOS_LIVE_PROJECT_TESTS !== '1' || !fs.existsSync(SPEED_FLEXY)) return;
   const globalResearch = path.join(REPO, 'docs/agents/research');
   const sfProblem = 'speed flexy domain specific research test';
   const cachePath = path.join(SPEED_FLEXY, 'docs/agents/research');

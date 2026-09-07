@@ -8,39 +8,11 @@ import { fileURLToPath } from 'node:url';
 import { getCanonicalVersion } from '../../policy/version.mjs';
 import { calculateSha256 } from '../security/checksum.mjs';
 import { createDeterministicZip, walkFilesSorted } from './deterministic-zip.mjs';
+import { deriveRcSourceManifest } from './rc-source-manifest.mjs';
 
 const ROOT = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
 const RELEASE_DIR = path.join(ROOT, 'release');
 const DIST_DIR = path.join(RELEASE_DIR, 'dist');
-
-const INCLUDE_PATHS = [
-  '.cursor-plugin',
-  'agents',
-  'skills',
-  'policy',
-  'intelligence',
-  'bootstrap',
-  'schemas',
-  'hooks',
-  'rules',
-  'package.json',
-  'README.md',
-  'CHANGELOG.md',
-];
-
-const EXCLUDE = new Set(['node_modules', '.git', 'release/dist', 'tests', 'coverage']);
-
-function copyRecursive(src, dest) {
-  fs.mkdirSync(dest, { recursive: true });
-  const entries = fs.readdirSync(src, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name));
-  for (const entry of entries) {
-    if (EXCLUDE.has(entry.name)) continue;
-    const s = path.join(src, entry.name);
-    const d = path.join(dest, entry.name);
-    if (entry.isDirectory()) copyRecursive(s, d);
-    else fs.copyFileSync(s, d);
-  }
-}
 
 const version = getCanonicalVersion();
 const bundleName = `forgeos-${version}`;
@@ -49,15 +21,12 @@ const bundleDir = path.join(DIST_DIR, bundleName);
 if (fs.existsSync(bundleDir)) fs.rmSync(bundleDir, { recursive: true, force: true });
 fs.mkdirSync(bundleDir, { recursive: true });
 
-for (const rel of INCLUDE_PATHS) {
+const sourceManifest = deriveRcSourceManifest(ROOT);
+for (const rel of sourceManifest.files.filter(f=>f.required_for_distribution).map(f=>f.path)) {
   const src = path.join(ROOT, rel);
-  if (!fs.existsSync(src)) continue;
   const dest = path.join(bundleDir, rel);
-  if (fs.statSync(src).isDirectory()) copyRecursive(src, dest);
-  else {
-    fs.mkdirSync(path.dirname(dest), { recursive: true });
-    fs.copyFileSync(src, dest);
-  }
+  fs.mkdirSync(path.dirname(dest), { recursive: true });
+  fs.copyFileSync(src, dest);
 }
 
 const manifestSrc = path.join(RELEASE_DIR, 'release-manifest.json');

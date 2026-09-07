@@ -76,6 +76,102 @@ export {
 export { discoverCapabilities, scoreSpecialist, selectBestSpecialist } from './orchestrator/scoring.mjs';
 
 export {
+  loadCapabilityBindings,
+  getCapabilityBinding,
+  normalizeCapabilityBinding,
+  CAPABILITY_STATES,
+  APPLICABILITY_STATES,
+} from './capability/binding.mjs';
+
+export { resolveCapability } from './capability/resolver.mjs';
+
+export {
+  runProjectAssessment,
+  assessCapability,
+} from './assessment/engine.mjs';
+
+export { buildProjectCanvas, formatCanvasText } from './assessment/canvas.mjs';
+
+export { collectProjectFacts } from './assessment/facts.mjs';
+export { createTaskCandidate } from './assessment/task-candidate.mjs';
+export { createTaskApproval, validateTaskApproval } from './orchestrator/approval.mjs';
+export { executeApprovedCandidate, rescanProject } from './orchestrator/approved-execution.mjs';
+export { assessCapabilityVerification } from './orchestrator/capability-verification.mjs';
+export { buildCanvasDelta } from './orchestrator/canvas-delta.mjs';
+export { createGovernanceEvidence, validateGovernanceEvidence } from './orchestrator/governance-evidence.mjs';
+export { analyzeIntent } from './orchestrator/intent.mjs';
+export { selectCapabilities } from './orchestrator/capability-selection.mjs';
+export { planCapabilityDependencies, detectCapabilityCycles } from './orchestrator/dependency-planner.mjs';
+export {
+  planFromRequest,
+  coordinateMainAgentPlan,
+  formatOrchestrationPlan,
+  computePlanFingerprint,
+  EXECUTION_STATUS_NOT_STARTED,
+} from './orchestrator/main-agent.mjs';
+export {
+  createHostHandoff,
+  requestHostTaskVerification,
+  loadHostHandoff,
+  formatHostHandoff,
+  validateHostHandoff,
+} from './orchestrator/host-handoff.mjs';
+export { discoverHostCapabilities, getHostExecutionAdapter } from '../host/discovery.mjs';
+
+export {
+  validateCapabilityOperation,
+  createCapabilityOperation,
+  fingerprintCapabilityOperation,
+  fingerprintOperationBinding,
+  OPERATION_RISKS,
+  OPERATION_TYPES,
+} from './capability/operation.mjs';
+export {
+  loadOperationRegistry,
+  getOperation,
+  listOperationsForCapability,
+  listAllOperations,
+  registerExternalOperation,
+  clearOperationRegistryCache,
+} from './capability/operations.mjs';
+export {
+  selectOperationsForFindings,
+  pickPreferredOperationCandidate,
+} from './capability/operation-selection.mjs';
+export { resolveCapabilityOperation } from './capability/resolver.mjs';
+
+export {
+  validateIntelligenceAdapter,
+  createProjectContext,
+  NORMALIZATION_VERSION,
+} from './adapters/adapter.mjs';
+export {
+  createStructuralFacts,
+  isStructuralFactsFresh,
+  deriveImpactSet,
+  STRUCTURAL_FACTS_SCHEMA,
+} from './adapters/structural-facts.mjs';
+export {
+  buildDependencyGraph,
+  computeChangeImpactSet,
+  dependencies as graphDependencies,
+  dependents as graphDependents,
+  ancestors as graphAncestors,
+  descendants as graphDescendants,
+  findCycles,
+} from './graph/index.mjs';
+export {
+  runStructuralAnalysis,
+  collectStructuralIntelligence,
+  describeAnalyzerAvailability,
+  listIntelligenceAdapters,
+  getIntelligenceAdapter,
+} from './adapters/index.mjs';
+export { createForgeOsStructuralAdapter } from './adapters/forgeos-structural/index.mjs';
+export { createTreeSitterAdapter, TREE_SITTER_BLOCKER } from './adapters/tree-sitter/index.mjs';
+export { createScipAdapter, SCIP_BLOCKER, detectScipIndex } from './adapters/scip/index.mjs';
+
+export {
   checkCompatibility,
   planUniversalOsUpdate,
   MIGRATION_MODES,
@@ -95,6 +191,8 @@ export {
 
 export const INTELLIGENCE_CAPABILITIES = [
   'structure-audit',
+  'structural-ast-analysis',
+  'dependency-graph-intelligence',
   'dependency-audit',
   'dead-code-analysis',
   'duplication-analysis',

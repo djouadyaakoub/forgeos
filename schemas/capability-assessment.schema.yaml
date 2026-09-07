@@ -1,0 +1,70 @@
+schema_id: capability-assessment
+schema_version: 1
+
+# Assessment evidence artifact — authoritative record under docs/project/assessments/
+# Canvas is derived from these artifacts; never write back to Project Intelligence.
+
+fields:
+  schema:
+    type: string
+    required: true
+    value: capability-assessment
+  capability_id:
+    type: string
+    required: true
+  applicability:
+    type: enum
+    values: [APPLICABLE, NOT_APPLICABLE, UNKNOWN]
+  state:
+    type: enum
+    values: [SATISFIED, PARTIAL, NEEDS_IMPROVEMENT, NOT_CONFIGURED, NOT_APPLICABLE, UNKNOWN]
+  confidence:
+    type: enum
+    values: [HIGH, MEDIUM, LOW]
+  severity:
+    type: enum
+    values: [critical, high, medium, low, info]
+  evidence:
+    type: array
+    note: Structured findings — not authoritative project contract
+  evidence_timestamp:
+    type: string
+    format: iso8601
+  freshness_ttl:
+    type: integer
+    unit: seconds
+  stale:
+    type: boolean
+  rationale:
+    type: string
+  recommended_action:
+    type: object
+    optional: true
+  verification:
+    type: object
+    optional: true
+  forgeos_version:
+    type: string
+  project_intelligence_contract_version:
+    type: integer
+    optional: true
+  project_intelligence_fingerprint:
+    type: string
+    optional: true
+  capability_binding_fingerprint:
+    type: string
+    optional: true
+  input_fingerprint:
+    type: string
+    optional: true
+  produced_at:
+    type: string
+    format: iso8601
+  assessment_module:
+    type: string
+    optional: true
+
+authority:
+  artifact: authoritative_assessment_evidence
+  canvas: derived_only
+  project_intelligence: never_modified_by_assessment

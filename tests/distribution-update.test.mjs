@@ -3,6 +3,7 @@
  * Phase 16 — GitHub packaging, distribution, and update lifecycle tests
  */
 import fs from 'node:fs';
+import { temporaryFixtures } from './helpers/temporary-fixtures.mjs';
 import path from 'node:path';
 import os from 'node:os';
 import { spawnSync } from 'node:child_process';
@@ -41,9 +42,10 @@ import { writeInstallManifest, getInstallManifestPath } from '../policy/plugin-r
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.dirname(ROOT);
-const FIXTURE_A = path.join(REPO, 'tests/fixtures/project-a');
-const FIXTURE_B = path.join(REPO, 'tests/fixtures/project-b');
-const FIXTURE_C = path.join(REPO, 'tests/fixtures/project-c');
+const FIXTURES = temporaryFixtures(path.join(REPO,'tests/fixtures'));
+const FIXTURE_A = path.join(FIXTURES, 'project-a');
+const FIXTURE_B = path.join(FIXTURES, 'project-b');
+const FIXTURE_C = path.join(FIXTURES, 'project-c');
 const FIXTURE_V1 = path.join(REPO, 'tests/fixtures/sample-project-v1');
 const MANIFEST_110 = path.join(REPO, 'tests/fixtures/release-manifest-1.1.0.json');
 const MANIFEST_200 = path.join(REPO, 'tests/fixtures/release-manifest-2.0.0.json');
@@ -91,7 +93,7 @@ console.log('Phase 16 — Distribution & Update Tests\n');
 
 console.log('--- Versioning ---');
 test('Canonical version from package.json', () => {
-  assert(getCanonicalVersion() === '1.0.0');
+  assert(getCanonicalVersion() === '2.0.0-rc.1');
 });
 test('Version sync across package, plugin, rules', () => {
   const sync = validateVersionSync();

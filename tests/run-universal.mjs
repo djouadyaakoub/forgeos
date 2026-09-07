@@ -3,6 +3,7 @@
  * Universal Agent OS test matrix
  */
 import fs from 'node:fs';
+import { temporaryFixtures } from './helpers/temporary-fixtures.mjs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -13,9 +14,12 @@ import { createLearningProposal } from '../policy/learning-factory.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.dirname(ROOT);
-const FIXTURE_A = path.join(ROOT, 'fixtures/project-a');
-const FIXTURE_B = path.join(ROOT, 'fixtures/project-b');
-const FIXTURE_EMPTY = path.join(ROOT, 'fixtures/empty-project');
+const FIXTURES = temporaryFixtures(path.join(ROOT,'fixtures'));
+const FIXTURE_A = path.join(FIXTURES, 'project-a');
+const FIXTURE_B = path.join(FIXTURES, 'project-b');
+const FIXTURE_EMPTY = path.join(FIXTURES, 'empty-project');
+// Git does not preserve empty directories; create this test-owned fixture explicitly.
+fs.mkdirSync(FIXTURE_EMPTY, { recursive: true });
 
 let passed = 0;
 let failed = 0;
@@ -138,12 +142,17 @@ test('Learning proposal created in project A only', () => {
 // Versioning
 console.log('\n--- Versioning ---');
 test('Compatible version detected', () => {
+  // The historical 1.x-only adapter must still reject this major release.
+  const adapter = path.join(FIXTURE_A, '.agent-os/project.yaml');
+  assert(!checkAgentOsCompatibility(FIXTURE_A).compatible, '1.x-only adapter must reject 2.x');
+  const original = fs.readFileSync(adapter, 'utf8');
+  fs.writeFileSync(adapter, original.replace('>=1.0 <2.0', '>=2.0 <3.0'));
   process.env.AGENT_OS_TEST_DIR = FIXTURE_A;
   const c = checkAgentOsCompatibility(FIXTURE_A);
   assert(c.compatible, c.reason);
 });
 test('Unsupported version detected', () => {
-  const badFixture = path.join(ROOT, 'fixtures/version-bad');
+  const badFixture = path.join(FIXTURES, 'version-bad');
   fs.mkdirSync(path.join(badFixture, '.agent-os'), { recursive: true });
   fs.writeFileSync(
     path.join(badFixture, '.agent-os/project.yaml'),

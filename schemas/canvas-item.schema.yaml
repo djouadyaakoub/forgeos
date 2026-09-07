@@ -1,0 +1,88 @@
+schema_id: canvas-item
+schema_version: 1
+
+# Derived Project Canvas item — NOT authoritative project state.
+
+fields:
+  schema:
+    type: string
+    value: canvas-item
+  capability_id:
+    type: string
+    required: true
+  canvas_category:
+    type: string
+  applicability:
+    type: enum
+    values: [APPLICABLE, NOT_APPLICABLE, UNKNOWN]
+  state:
+    type: enum
+    values: [SATISFIED, PARTIAL, NEEDS_IMPROVEMENT, NOT_CONFIGURED, NOT_APPLICABLE, UNKNOWN]
+  confidence:
+    type: enum
+    values: [HIGH, MEDIUM, LOW]
+  severity:
+    type: enum
+    values: [critical, high, medium, low, info]
+  evidence:
+    type: array
+  evidence_timestamp:
+    type: string
+    format: iso8601
+    optional: true
+  freshness_ttl:
+    type: integer
+  stale:
+    type: boolean
+  rationale:
+    type: string
+  recommended_action:
+    type: object
+    optional: true
+  implementation:
+    type: object
+    optional: true
+    note: Capability resolver output — not execution authorization
+  implementation_display:
+    type: string
+    optional: true
+    note: Stage 12 — HOST_NATIVE | FORGEOS_NATIVE | OSS_BACKED
+  invocation_display:
+    type: string
+    optional: true
+    note: Stage 12 — INTERACTIVE | PROGRAMMATIC | UNKNOWN
+  available:
+    type: boolean
+    optional: true
+    note: Stage 12 — implementation available (interactive host still available)
+  evidence_class:
+    type: string
+    optional: true
+    note: Stage 13 — deterministic | heuristic | insufficient
+  evidence_source:
+    type: string
+    optional: true
+  analyzer:
+    type: string
+    optional: true
+  task_candidate:
+    type: object
+    optional: true
+    note: Candidate only — execute:false in Stage 8
+  verification:
+    type: object
+    optional: true
+  last_verified:
+    type: string
+    optional: true
+  verified_by_task:
+    type: string
+    optional: true
+
+authority:
+  canvas_item: derived
+  project_intelligence: authoritative_separate
+  assessment_evidence: authoritative_separate
+
+reproducibility:
+  rule: identical authoritative inputs must produce identical canvas fingerprint

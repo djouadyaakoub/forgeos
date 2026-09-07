@@ -1,0 +1,40 @@
+schema_id: forgeos-task-candidate
+schema_version: 1
+
+fields:
+  schema: { type: string, value: forgeos-task-candidate }
+  task_id: { type: string, required: true }
+  capability_id: { type: string, required: true }
+  objective: { type: string }
+  scope: { type: array }
+  task_scope: { type: object, optional: true, note: Stage 25 workspace-bound forgeos-task-scope; bound before handoff/approved execution }
+  rationale: { type: string }
+  severity: { type: string }
+  implementation:
+    type: object
+    properties:
+      type: { enum: [host_native, forgeos_native, oss_backed] }
+      id: { type: string }
+  expected_evidence: { type: string }
+  verification_strategy: { enum: [none, presence, project_verification_commands, finding_resolution] }
+  verification_contract: { type: object, optional: true }
+  policy_context:
+    type: object
+    note: References project/agent constraints — does not duplicate Project Intelligence
+  created_at: { type: string, format: iso8601 }
+  operation: { type: object, optional: true, note: Stage 9 remediation payload e.g. write_files }
+  operation_id: { type: string, optional: true, note: Stage 14 capability operation id }
+  capability_operation: { type: object, optional: true, note: Stage 14 operation binding snapshot }
+  finding_ids: { type: array, optional: true }
+  affected_files: { type: array, optional: true }
+  risk: { type: string, optional: true, note: Operation risk metadata — not Policy }
+  expected_effects: { type: array, optional: true }
+  operation_binding_fingerprint: { type: string, optional: true }
+  depends_on: { type: array, note: task_id dependencies — planning only, not policy }
+  parallelizable: { type: boolean, note: Stage 11 planning hint — no parallel execution }
+  execute: { type: boolean, value: false }
+  auto_execute: { type: boolean, value: false }
+
+authority:
+  candidate: advisory
+  project_intelligence: not_duplicated

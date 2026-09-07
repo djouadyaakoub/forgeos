@@ -2,6 +2,7 @@
  * Documentation drift detection
  */
 import fs from 'node:fs';
+import { readProjectText } from '../../host/project-files.mjs';
 import path from 'node:path';
 import { walkProject } from '../structure/analyzer.mjs';
 
@@ -19,12 +20,15 @@ export function detectDocumentationDrift(projectDir, knowledge = {}) {
   const hasFlutter = files.some((f) => f.endsWith('pubspec.yaml'));
 
   for (const c of checks) {
-    const full = path.join(projectDir, c.doc);
-    if (!fs.existsSync(full)) {
+    let raw;
+    try { raw = readProjectText(projectDir, c.doc); }
+    catch { drift.push({type:'invalid_doc',path:c.doc,issue:'Document is not a safe bounded regular file',severity:'medium'}); continue; }
+    if (raw === null) {
       drift.push({ type: 'missing_doc', path: c.doc, severity: 'medium' });
       continue;
     }
-    const content = fs.readFileSync(full, 'utf8').toLowerCase();
+    const content = raw.toLowerCase();
+    if (!content.trim()) drift.push({type:'empty_doc',path:c.doc,issue:'Document is empty',severity:'medium'});
     if (c.label === 'STACK') {
       if (hasGo && !content.includes('go')) drift.push({ type: 'stack_drift', path: c.doc, issue: 'Go detected in repo but not mentioned in STACK', severity: 'medium' });
       if (hasFlutter && !content.includes('flutter')) drift.push({ type: 'stack_drift', path: c.doc, issue: 'Flutter detected but not in STACK', severity: 'medium' });

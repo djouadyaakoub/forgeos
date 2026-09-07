@@ -1,0 +1,74 @@
+schema_id: forgeos-governance-evidence
+schema_version: 1
+
+# ForgeOS governance evidence — append-only, not runtime-native transcripts.
+# Evidence is not an authorization mechanism and cannot grant execution.
+
+fields:
+  schema:
+    type: string
+    required: true
+    value: forgeos-governance-evidence
+  evidence_class:
+    type: enum
+    values: [FORGEOS_GOVERNANCE_EVIDENCE]
+  evidence_id:
+    type: string
+    required: true
+  task_id:
+    type: string
+    required: true
+  capability_id:
+    type: string
+    required: true
+  execution_id:
+    type: string
+    optional: true
+  verification_result:
+    type: enum
+    values: [PASS, FAIL, UNKNOWN]
+  verification_strategy:
+    type: enum
+    values: [none, presence, project_verification_commands, finding_resolution]
+  checks:
+    type: array
+    note: Independent verification checks — not a single opaque boolean
+  project_fingerprint:
+    type: object
+    fields:
+      project_intelligence_fingerprint: string
+      input_fingerprint: string
+      capability_binding_fingerprint: string
+      verification_strategy_fingerprint: string
+      scoped_state_fingerprint: string
+      composite: string
+  forgeos_version:
+    type: string
+  timestamps:
+    type: object
+  authority:
+    type: string
+    value: forgeos
+  source_references:
+    type: object
+  freshness:
+    type: object
+  integrity:
+    type: string
+    note: SHA-256 of canonical record excluding this field
+  supersedes_evidence_id:
+    type: string
+    optional: true
+  runtime_native_evidence:
+    type: object
+    optional: true
+    note: RUNTIME_NATIVE_EVIDENCE is informational only
+  verified:
+    type: boolean
+    note: true only when verification_result is PASS
+
+authority:
+  governance_evidence: forgeos_owned
+  runtime_native_evidence: not_authoritative
+  cannot_authorize_execution: true
+  cannot_override_policy: true

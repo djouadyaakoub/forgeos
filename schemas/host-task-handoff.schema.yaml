@@ -1,0 +1,85 @@
+schema_id: forgeos-host-task-handoff
+schema_version: 1
+task_scope_contract: forgeos-task-scope
+task_scope_required_for_current_completion: true
+
+# Stage 12 interactive host handoff — not proof of execution or verification.
+
+fields:
+  schema:
+    type: string
+    value: forgeos-host-task-handoff
+  task_id:
+    type: string
+    required: true
+  capability_id:
+    type: string
+    required: true
+  objective:
+    type: string
+  scope:
+    type: array
+  constraints:
+    type: object
+  workspace:
+    type: object
+    properties:
+      project_dir: string
+      same_workspace: boolean
+  project_id:
+    type: string
+  operation_id:
+    type: string
+  expected_effects:
+    type: array
+  relevant_evidence:
+    type: object
+  completion_requirements:
+    type: object
+  project_intelligence_fingerprint:
+    type: string
+  host_context_fingerprint:
+    type: string
+    description: Current manifest and capability-binding snapshot; changed context requires regeneration.
+  expected_evidence:
+    type: string
+  verification_strategy:
+    type: enum
+    values: [none, presence, project_verification_commands, finding_resolution]
+  verification_contract:
+    type: object
+    optional: true
+    description: Versioned task/workspace/configuration-bound finding targets, checked by ForgeOS; covered by handoff integrity.
+  policy_context:
+    type: object
+  host:
+    type: object
+  invocation_mode:
+    type: enum
+    values: [interactive, programmatic, unknown]
+  implementation:
+    type: object
+    properties:
+      type: { enum: [host_native] }
+      available: boolean
+      executable: boolean
+      invocation: { enum: [interactive, programmatic, unknown] }
+  instructions:
+    type: string
+  execution_status:
+    type: enum
+    values: [HANDOFF_READY, HOST_INTERACTIVE_REQUIRED, VERIFICATION_REQUESTED, NOT_STARTED]
+  verification_status:
+    type: enum
+    values: [NOT_STARTED, PASS, FAIL, UNKNOWN]
+  handoff_fingerprint:
+    type: string
+  integrity:
+    type: string
+
+authority:
+  handoff: advisory_interactive
+  does_not_prove_execution: true
+  does_not_prove_verification: true
+  policy_authority: policy/authority.mjs
+  host_is_not_policy_authority: true

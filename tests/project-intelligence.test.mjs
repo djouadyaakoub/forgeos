@@ -3,6 +3,7 @@
  * Phase 20 — Universal Project Intelligence tests
  */
 import fs from 'fs';
+import { temporaryFixtures } from './helpers/temporary-fixtures.mjs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { extractProjectAdapter, summarizeAdapter } from '../bootstrap/adapter-extraction.mjs';
@@ -18,7 +19,7 @@ import { shouldTriggerResearch, shouldTriggerStructure, shouldTriggerDeployment 
 import { readResearchCache, writeResearchCache } from '../intelligence/research/workflow.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
-const FIXTURES = path.join(ROOT, 'fixtures');
+const FIXTURES = temporaryFixtures(path.join(ROOT, 'fixtures'));
 const SPEED_FLEXY = process.env.SPEED_FLEXY_PATH || 'C:/Apps/speed-flexy-server';
 const SIM = 'C:/Apps/sim-activation';
 
@@ -173,7 +174,7 @@ test('inferred capability cannot be VERIFIED confidence', () => {
 });
 
 console.log('\n--- Live project read-only ---');
-if (fs.existsSync(SIM)) {
+if (process.env.FORGEOS_LIVE_PROJECT_TESTS === '1' && fs.existsSync(SIM)) {
   test('sim-activation capabilities > 0', () => {
     const profile = buildCanonicalProjectProfile(SIM);
     assert(profile.capabilities.length > 0, `caps ${profile.capabilities.length}`);
@@ -185,7 +186,7 @@ if (fs.existsSync(SIM)) {
   });
 }
 
-if (fs.existsSync(SPEED_FLEXY)) {
+if (process.env.FORGEOS_LIVE_PROJECT_TESTS === '1' && fs.existsSync(SPEED_FLEXY)) {
   test('Speed Flexy registry capabilities preserved', () => {
     const before = summarizeAdapter(extractProjectAdapter(SPEED_FLEXY).adapter);
     assert(before.capability_count >= 30, `caps ${before.capability_count}`);

@@ -1,5 +1,12 @@
 # Security Model
 
+## Policy Authority
+
+ForgeOS has a single ALLOW/BLOCK authority: `POLICY_AUTHORITY = forgeos`
+(`policy/authority.mjs` → `policy/engine.mjs`). Host adapters translate and
+enforce; they do not implement a second rule engine. See
+`docs/architecture/POLICY-AUTHORITY.md`.
+
 ## Effective security
 
 ```text

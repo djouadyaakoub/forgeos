@@ -4,13 +4,14 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { resolvePluginRoot, hookCommand } from './plugin-root.mjs';
+import { POLICY_AUTHORITY as CANONICAL_POLICY_AUTHORITY } from './identity.mjs';
 
 const MANIFEST_REL = '.agent-os/project.yaml';
 
 export const RUNTIME_MODES = ['LOCAL_RUNTIME', 'UNIVERSAL_RUNTIME', 'MIGRATION'];
-export const POLICY_AUTHORITY = 'forgeos';
+/** @deprecated Prefer importing POLICY_AUTHORITY from identity.mjs; re-exported for compatibility */
+export const POLICY_AUTHORITY = CANONICAL_POLICY_AUTHORITY;
 
 let _resolvedProjectDir = null;
 let _runtimeConfig = null;
@@ -86,6 +87,7 @@ export function collectProjectCandidates(hookInput = null) {
 
   if (process.env.CURSOR_PROJECT_DIR) candidates.push(process.env.CURSOR_PROJECT_DIR);
   if (process.env.CURSOR_WORKSPACE) candidates.push(process.env.CURSOR_WORKSPACE);
+  if (process.env.FORGEOS_TEST_DIR) candidates.push(process.env.FORGEOS_TEST_DIR);
   if (process.env.AGENT_OS_TEST_DIR) candidates.push(process.env.AGENT_OS_TEST_DIR);
 
   for (const key of ['workspace_folder', 'workspace_root', 'project_path', 'rootPath', 'cwd']) {
@@ -107,7 +109,10 @@ export function collectProjectCandidates(hookInput = null) {
 
 export function resolveProjectDir(hookInput = null) {
   if (_resolvedProjectDir) return _resolvedProjectDir;
-  const fromEnv = process.env.CURSOR_PROJECT_DIR || process.env.AGENT_OS_TEST_DIR;
+  const fromEnv =
+    process.env.CURSOR_PROJECT_DIR ||
+    process.env.FORGEOS_TEST_DIR ||
+    process.env.AGENT_OS_TEST_DIR;
   if (fromEnv) {
     _resolvedProjectDir = path.resolve(fromEnv);
     return _resolvedProjectDir;
@@ -123,7 +128,7 @@ export function loadRuntimeConfig(projectDir = resolveProjectDir()) {
   if (!fs.existsSync(runtimePath)) {
     _runtimeConfig = {
       mode: 'LOCAL_RUNTIME',
-      policy_authority: 'local',
+      policy_authority: 'local-legacy',
       plugin_root: null,
       source: 'default',
     };
@@ -131,9 +136,17 @@ export function loadRuntimeConfig(projectDir = resolveProjectDir()) {
   }
   const parsed = parseSimpleRuntimeYaml(fs.readFileSync(runtimePath, 'utf8'));
   const runtime = parsed.runtime || {};
+  const rawAuthority = runtime.policy_authority || CANONICAL_POLICY_AUTHORITY;
+  // Legacy manifests wrote "universal" / "universal-agent-os"; authority is forgeos.
+  const normalizedAuthority =
+    rawAuthority === 'universal' ||
+    rawAuthority === 'universal-agent-os' ||
+    rawAuthority === 'agent-os'
+      ? CANONICAL_POLICY_AUTHORITY
+      : rawAuthority;
   _runtimeConfig = {
     mode: runtime.mode || 'UNIVERSAL_RUNTIME',
-    policy_authority: runtime.policy_authority || 'universal',
+    policy_authority: normalizedAuthority,
     plugin_id: runtime.plugin_id || 'cursor-agent-os',
     hook_strategy: runtime.hook_strategy || 'portable_shim',
     plugin_root: runtime.plugin_root || null,

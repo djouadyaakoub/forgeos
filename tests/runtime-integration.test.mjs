@@ -91,7 +91,7 @@ test('Universal engine reports single authority', () => {
 });
 
 test('Speed Flexy loads project adapter not global-only', () => {
-  if (!fs.existsSync(path.join(SPEED_FLEXY, '.agent-os/project.yaml'))) {
+  if (process.env.FORGEOS_LIVE_PROJECT_TESTS !== '1' || !fs.existsSync(path.join(SPEED_FLEXY, '.agent-os/project.yaml'))) {
     console.log('  SKIP  Speed Flexy adapter (not present)');
     return;
   }
@@ -104,7 +104,7 @@ test('Speed Flexy loads project adapter not global-only', () => {
 
 console.log('\n--- Live hook invocation (Universal runtime) ---');
 test('Hook blocks protected path via Universal engine', () => {
-  if (!fs.existsSync(path.join(SPEED_FLEXY, '.cursor/hooks/agent-os/policy-pre-tool.mjs'))) {
+  if (process.env.FORGEOS_LIVE_PROJECT_TESTS !== '1' || !fs.existsSync(path.join(SPEED_FLEXY, '.cursor/hooks/agent-os/policy-pre-tool.mjs'))) {
     console.log('  SKIP  Speed Flexy portable shim not installed');
     return;
   }
@@ -126,7 +126,7 @@ test('Hook blocks protected path via Universal engine', () => {
 });
 
 test('Hook blocks fly_deploy without approval', () => {
-  if (!fs.existsSync(path.join(SPEED_FLEXY, '.cursor/hooks/agent-os/policy-shell.mjs'))) {
+  if (process.env.FORGEOS_LIVE_PROJECT_TESTS !== '1' || !fs.existsSync(path.join(SPEED_FLEXY, '.cursor/hooks/agent-os/policy-shell.mjs'))) {
     console.log('  SKIP  Speed Flexy portable shim not installed');
     return;
   }
@@ -146,7 +146,7 @@ test('Hook blocks fly_deploy without approval', () => {
 });
 
 test('Single authority — hooks.json uses portable shims not local engine', () => {
-  if (!fs.existsSync(path.join(SPEED_FLEXY, '.cursor/hooks.json'))) {
+  if (process.env.FORGEOS_LIVE_PROJECT_TESTS !== '1' || !fs.existsSync(path.join(SPEED_FLEXY, '.cursor/hooks.json'))) {
     console.log('  SKIP  Speed Flexy hooks.json missing');
     return;
   }
@@ -162,7 +162,7 @@ test('Single authority — hooks.json uses portable shims not local engine', () 
 
 console.log('\n--- Tier 3 task-bound approval ---');
 test('Approved task allows wrangler_deploy; wrong task denied', () => {
-  if (!fs.existsSync(path.join(SPEED_FLEXY, '.agent-os/project.yaml'))) {
+  if (process.env.FORGEOS_LIVE_PROJECT_TESTS !== '1' || !fs.existsSync(path.join(SPEED_FLEXY, '.agent-os/project.yaml'))) {
     console.log('  SKIP  Speed Flexy not present');
     return;
   }
@@ -179,7 +179,7 @@ test('Approved task allows wrangler_deploy; wrong task denied', () => {
 
 console.log('\n--- MCP metadata ---');
 test('Adapter MCP section has no raw secrets', () => {
-  if (!fs.existsSync(path.join(SPEED_FLEXY, '.agent-os/project.yaml'))) {
+  if (process.env.FORGEOS_LIVE_PROJECT_TESTS !== '1' || !fs.existsSync(path.join(SPEED_FLEXY, '.agent-os/project.yaml'))) {
     console.log('  SKIP  Speed Flexy not present');
     return;
   }

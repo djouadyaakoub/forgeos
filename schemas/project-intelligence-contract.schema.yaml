@@ -1,0 +1,149 @@
+# Project Intelligence Contract — schema (Architecture 2.0 Stage 1)
+#
+# Canonical persisted form: .agent-os/project.yaml
+# In-memory API: policy/project-intelligence-contract.mjs
+#
+# Authority classes:
+#   DECLARED | DISCOVERED | INFERRED | APPROVED | AUTHORITATIVE
+#
+# Capability model:
+#   effective = global_capabilities + project_capabilities
+#   Project may add restrictions/capabilities; must not weaken global policy baseline.
+
+schema_id: project-intelligence-contract
+current_version: 1
+min_supported_version: 1
+max_supported_version: 1
+
+persistence:
+  path: .agent-os/project.yaml
+  alternate_json: .agent-os/project.json
+  note: Single source of truth — no parallel intelligence.json
+
+versioning:
+  preferred_field: contract.version
+  legacy_field: schema_version
+  missing_both_with_project_block: treat_as_1
+
+fields:
+  contract:
+    type: object
+    authority: AUTHORITATIVE
+    properties:
+      version:
+        type: integer
+        required: false
+        default_from: schema_version | 1
+
+  schema_version:
+    type: integer
+    authority: AUTHORITATIVE
+    required: false
+    note: Legacy alias; mirrored from contract.version on write
+
+  forgeos:
+    type: object
+    authority: AUTHORITATIVE
+    aliases: [agent_os]
+    properties:
+      version: { type: string, note: "semver range e.g. >=1.0 <2.0" }
+      adapter_schema_version: { type: integer }
+
+  project:
+    type: object
+    required: true
+    properties:
+      id: { type: string, required: true, authority: AUTHORITATIVE }
+      name: { type: string, authority: DECLARED }
+      type: { type: string, authority: DECLARED }
+      task_id_prefix: { type: string, authority: AUTHORITATIVE }
+
+  stack:
+    type: object
+    authority: DISCOVERED
+    note: Discovery signal; not silently authoritative over declared ownership
+
+  paths:
+    type: object
+    authority: DECLARED
+
+  knowledge:
+    type: object
+    authority: DECLARED
+    note: Pointers only; never silently promote to global ForgeOS knowledge
+
+  capabilities:
+    type: array
+    authority: DECLARED
+    empty_valid: true
+    note: "[] is valid greenfield state"
+
+  agents:
+    type: object
+    authority: AUTHORITATIVE
+    empty_valid: true
+    note: Mapping id → config — NOT an array
+
+  ownership:
+    type: array
+    authority: AUTHORITATIVE
+    empty_valid: true
+
+  policy:
+    type: object
+    authority: AUTHORITATIVE
+    properties:
+      protected_paths: { type: array, empty_valid: true }
+      tier3_operations: { type: array, empty_valid: true }
+      shell_rules: { type: array, empty_valid: true }
+      mcp_rules: { type: array, empty_valid: true }
+    note: Project may ADD restrictions; cannot remove global protected paths / baseline Tier 3
+
+  verification:
+    type: object
+    authority: DECLARED
+    properties:
+      commands: { type: array, empty_valid: true }
+
+  deployment:
+    type: object
+    authority: DECLARED
+    optional: true
+
+  integrations:
+    type: object
+    properties:
+      mcp: { type: array, empty_valid: true, authority: DECLARED }
+
+  runtime:
+    type: object
+    authority: DECLARED
+    optional: true
+    note: Constraints for a future Runtime Router — does NOT select Cline/OpenHands/etc.
+    properties:
+      requirements:
+        type: object
+        keys_optional:
+          - interactive
+          - autonomous
+          - sandbox
+          - parallel
+          - network
+          - filesystem
+
+list_semantics:
+  empty_array: must_remain_array
+  forbidden_coercions:
+    - "[] → {}"
+    - "[] → \"[]\""
+  empty_object_on_list_field: normalize_to_empty_array
+  non_empty_object_on_list_field: fail_closed
+
+discovery_vs_authority:
+  discovered: candidate intelligence (stack, filesystem signals)
+  declared_or_approved: contract authority
+  rule: discovery must not silently overwrite explicit declarations
+
+boundaries:
+  project_vs_task: Project contract describes the project; task/run state stays in docs/project/tasks/
+  knowledge: Global ForgeOS knowledge ✕ silent promotion ← Project knowledge ← Task evidence

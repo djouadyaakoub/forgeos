@@ -21,6 +21,7 @@ const REQUIRED_PATHS = [
   '.cursor-plugin/plugin.json',
   'policy/engine.mjs',
   'policy/hooks/policy-pre-tool.mjs',
+  'templates/runtime/hook-shim.mjs',
   'package.json',
   'release/release-manifest.json',
 ];

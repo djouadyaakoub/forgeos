@@ -1,7 +1,7 @@
 # AGENTS.md — Project Entry Point
 
 > This file describes **this project** for human and agent readers.
-> Universal Agent OS behavior is provided by the global plugin; project specifics live here.
+> ForgeOS governance remains authoritative; project-specific contributor guidance lives here.
 
 ## Project summary
 
@@ -35,8 +35,13 @@ code / config
 
 <!-- Commands agents must run before claiming done -->
 
-## Agent OS
+## ForgeOS contributor boundaries
 
 - Manifest: `.agent-os/project.yaml`
 - Tasks: `docs/project/tasks/`
-- Project specialists: `.cursor/agents/`
+- Capability != Agent. Do not create permanent specialist agents for host integration.
+- Work in this project/workspace; do not launch another coding host.
+- Policy DENY remains binding. Host completion is not ForgeOS verification PASS.
+- Canvas is derived from verified evidence, not an approval source.
+- Preserve existing dirty work. Do not commit, tag, push or release without explicit authorization.
+- Codex and Cursor use this file; a Claude Code facade may import it using @AGENTS.md.

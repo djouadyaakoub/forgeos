@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
- * Portable hook shim — resolves Universal Agent OS plugin and delegates.
- * Copied to <project>/.cursor/hooks/agent-os/ during integrate-runtime.
+ * Portable hook shim — resolves ForgeOS install and delegates to Policy Authority hooks.
+ * Copied to <project>/.cursor/hooks/agent-os/ during integrate-runtime / bootstrap.
+ *
+ * Does NOT evaluate policy itself. Fail-closed if ForgeOS root cannot be resolved.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,7 +13,11 @@ import { fileURLToPath } from 'node:url';
 
 const HOOK_NAME = path.basename(fileURLToPath(import.meta.url));
 const PLUGIN_ID = 'cursor-agent-os';
-const INSTALL_MANIFEST = path.join(os.homedir(), '.cursor', 'agent-os', 'install.json');
+
+const INSTALL_MANIFESTS = [
+  path.join(os.homedir(), '.cursor', 'forge-os', 'install.json'),
+  path.join(os.homedir(), '.cursor', 'agent-os', 'install.json'),
+];
 
 function exists(p) {
   try {
@@ -30,23 +36,31 @@ function isValidRoot(root) {
 }
 
 function resolveRoot() {
-  const envs = [process.env.CURSOR_AGENT_OS_PLUGIN_ROOT, process.env.AGENT_OS_PLUGIN_ROOT];
+  const envs = [
+    process.env.FORGEOS_ROOT,
+    process.env.CURSOR_AGENT_OS_PLUGIN_ROOT,
+    process.env.AGENT_OS_PLUGIN_ROOT,
+  ];
   for (const e of envs) {
     if (e && isValidRoot(e)) return path.resolve(e);
   }
-  if (exists(INSTALL_MANIFEST)) {
+  for (const manifestPath of INSTALL_MANIFESTS) {
+    if (!exists(manifestPath)) continue;
     try {
-      const m = JSON.parse(fs.readFileSync(INSTALL_MANIFEST, 'utf8'));
+      const m = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
       if (m.plugin_root && isValidRoot(m.plugin_root)) return path.resolve(m.plugin_root);
     } catch {
       /* continue */
     }
   }
+  if (process.env.FORGEOS_DEV_ROOT && isValidRoot(process.env.FORGEOS_DEV_ROOT)) {
+    return path.resolve(process.env.FORGEOS_DEV_ROOT);
+  }
   if (process.env.AGENT_OS_DEV_ROOT && isValidRoot(process.env.AGENT_OS_DEV_ROOT)) {
     return path.resolve(process.env.AGENT_OS_DEV_ROOT);
   }
   throw new Error(
-    `Universal Agent OS plugin not found for hook ${HOOK_NAME}. Install: node <plugin>/bootstrap/install-plugin.mjs`
+    `ForgeOS plugin not found for hook ${HOOK_NAME} (plugin_id=${PLUGIN_ID}). Install: node <forgeos>/bootstrap/install-plugin.mjs`
   );
 }
 
@@ -74,7 +88,8 @@ try {
   process.stdout.write(
     JSON.stringify({
       permission: 'deny',
-      user_message: 'Blocked: Universal Agent OS plugin not available (fail closed).',
+      authority: 'forgeos',
+      user_message: 'Blocked: ForgeOS policy authority not available (fail closed).',
       agent_message: err.message,
     })
   );

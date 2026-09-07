@@ -6,8 +6,15 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadDistributionConfig } from '../../policy/distribution.mjs';
 import { validateReleaseManifest } from './authenticity.mjs';
+import { compareSemver, parseSemver } from '../../policy/version.mjs';
 
 const REPO_ROOT = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
+
+// GitHub tags permit exactly one lowercase v; internal versions remain strict SemVer.
+function releaseVersion(raw) {
+  const tag = raw.tag_name || raw.tag;
+  return typeof tag === 'string' ? tag.replace(/^v/, '') : tag ?? raw.version;
+}
 
 function parseChannel(release, channel = 'stable') {
   const tag = release.tag_name || release.tag || '';
@@ -39,7 +46,7 @@ function normalizeRelease(raw, config, options = {}) {
   }
 
   return {
-    version: (raw.tag_name || raw.tag || '').replace(/^v/, '') || raw.version,
+    version: releaseVersion(raw),
     tag: raw.tag_name || raw.tag,
     published_at: raw.published_at || raw.publishedAt || null,
     release_url: raw.html_url || raw.release_url || null,
@@ -66,14 +73,10 @@ function filterByChannel(releases, channel) {
 }
 
 function sortByVersion(releases) {
-  return [...releases].sort((a, b) => {
-    const va = (a.tag_name || a.tag || '').replace(/^v/, '').split('.').map(Number);
-    const vb = (b.tag_name || b.tag || '').replace(/^v/, '').split('.').map(Number);
-    for (let i = 0; i < 3; i++) {
-      if ((vb[i] || 0) !== (va[i] || 0)) return (vb[i] || 0) - (va[i] || 0);
-    }
-    return 0;
-  });
+  const version = releaseVersion;
+  // Invalid remote versions cannot win selection, including a one-element list.
+  return releases.filter(r=>{try {parseSemver(version(r));return true;}catch {return false;}})
+    .sort((a,b)=>compareSemver(version(b),version(a)));
 }
 
 export async function discoverLatestGithubRelease(config, options = {}) {

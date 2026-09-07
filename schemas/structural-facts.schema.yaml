@@ -1,0 +1,60 @@
+schema_id: forgeos-structural-facts
+schema_version: 1
+
+# Stage 13 derived structural intelligence — NOT Project Intelligence authority.
+
+fields:
+  schema:
+    type: string
+    value: forgeos-structural-facts
+  authority:
+    type: string
+    value: derived_evidence
+  authoritative:
+    type: boolean
+    value: false
+  derived:
+    type: boolean
+    value: true
+  project_fingerprint:
+    type: string
+  input_fingerprint:
+    type: string
+  analysis_fingerprint:
+    type: string
+  analyzer:
+    type: object
+  evidence_class:
+    type: enum
+    values: [deterministic, heuristic, insufficient]
+  languages:
+    type: array
+  files:
+    type: array
+  symbols:
+    type: array
+  declarations:
+    type: array
+  references:
+    type: array
+  imports:
+    type: array
+  exports:
+    type: array
+  dependency_edges:
+    type: array
+  structural_edges:
+    type: array
+  diagnostics:
+    type: array
+  findings:
+    type: array
+  evidence:
+    type: object
+
+authority:
+  structural_facts: derived_evidence
+  project_intelligence: authoritative_separate
+  policy: not_granted
+  canvas: not_granted
+  execution: forbidden

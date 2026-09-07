@@ -34,6 +34,12 @@ Git-backed `docs/project/tasks/` is authoritative. Chat is not source of truth.
 
 Production-impacting operations require task-bound human approval. Never auto-approve.
 
+## Law 6a — Policy Authority
+
+ForgeOS Policy Authority (`forgeos`) is the sole ALLOW/BLOCK decision layer for
+ForgeOS-governed operations. Host adapters enforce; they do not authorize.
+See `docs/architecture/POLICY-AUTHORITY.md`.
+
 ## Law 7 — Protected configuration
 
 Agent OS registry, hooks, policy, and this file require `agent_os_config_write` approval.

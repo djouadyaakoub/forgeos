@@ -1,14 +1,23 @@
 /**
  * Host adapter registry
+ *
+ * Registers Host Adapters (Cursor / CLI / generic) — NOT Runtime Backends.
+ * Runtime Backend registration lives in `runtime/registry.mjs`.
+ * Routing lives in `runtime/router.mjs`.
+ *
+ * The nested field `runtime.entrypoint` on host descriptors means
+ * "host adapter module entrypoint", not a RuntimeBackend implementation.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateHostAdapter } from '../runtime/interface.mjs';
+import { PRODUCT_HOST_IDS, getProductHost } from '../host/catalog.mjs';
+import { selectHost } from '../host/discovery.mjs';
 
 const ADAPTERS_ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'adapters');
 
-const BUILTIN_HOSTS = {
+const LEGACY_INVENTORY = {
   cursor: {
     id: 'cursor',
     name: 'Cursor',
@@ -53,24 +62,32 @@ const BUILTIN_HOSTS = {
   },
 };
 
+// Compatibility bootstrap/event descriptors; first-class identities come only from the catalog.
+const BUILTIN_HOSTS = {
+  ...LEGACY_INVENTORY,
+  ...Object.fromEntries(PRODUCT_HOST_IDS.map(id => [id, {
+    ...(LEGACY_INVENTORY[id] || { capabilities: { agents: false, hooks: false, tasks: true, terminal: false, workspace: true, approval_ui: false } }),
+    id, name: getProductHost(id).name, product_host: true, implementation_kind: 'HOST_NATIVE',
+    preparation: 'project_local_instructions', live_verified: false,
+  }])),
+};
+
 export function listHostAdapters() {
   return Object.values(BUILTIN_HOSTS);
 }
 
 export function getHostAdapter(hostId = 'generic') {
-  const adapter = BUILTIN_HOSTS[hostId];
+  const adapter = typeof hostId === 'string' && Object.hasOwn(BUILTIN_HOSTS, hostId) ? BUILTIN_HOSTS[hostId] : null;
   if (!adapter) return { valid: false, reason: 'unknown_host', host_id: hostId };
   const validation = validateHostAdapter(adapter);
   return { ...adapter, ...validation };
 }
 
 export function detectHostAdapter(options = {}) {
-  if (options.host_id) return getHostAdapter(options.host_id);
-  if (process.env.CURSOR_PROJECT_DIR || process.env.CURSOR_WORKSPACE) {
-    return getHostAdapter('cursor');
-  }
-  if (options.cli) return getHostAdapter('cli');
-  return getHostAdapter('generic');
+  const selected = selectHost(options);
+  if (!selected.ok) return { valid: false, reason: selected.reason };
+  // Legacy no-selection bootstrap context remains generic/CLI, not an active-host claim.
+  return getHostAdapter(selected.source === 'legacy_default' ? (options.cli ? 'cli' : 'generic') : selected.host_id);
 }
 
 export { ADAPTERS_ROOT, BUILTIN_HOSTS };

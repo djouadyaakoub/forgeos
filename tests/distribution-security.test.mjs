@@ -3,6 +3,7 @@
  * Phase 17 — Distribution security & GitHub integration tests
  */
 import fs from 'node:fs';
+import { temporaryFixtures } from './helpers/temporary-fixtures.mjs';
 import path from 'node:path';
 import os from 'node:os';
 import { spawnSync } from 'node:child_process';
@@ -23,9 +24,10 @@ import { MIGRATION_MODES } from '../intelligence/update/planner.mjs';
 
 const REPO = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const GITHUB_FIXTURE = path.join(REPO, 'tests/fixtures/github/releases-stable.json');
-const FIXTURE_A = path.join(REPO, 'tests/fixtures/project-a');
-const FIXTURE_B = path.join(REPO, 'tests/fixtures/project-b');
-const FIXTURE_C = path.join(REPO, 'tests/fixtures/project-c');
+const FIXTURES = temporaryFixtures(path.join(REPO,'tests/fixtures'));
+const FIXTURE_A = path.join(FIXTURES, 'project-a');
+const FIXTURE_B = path.join(FIXTURES, 'project-b');
+const FIXTURE_C = path.join(FIXTURES, 'project-c');
 const MANIFEST_110 = path.join(REPO, 'tests/fixtures/release-manifest-1.1.0.json');
 
 let passed = 0;

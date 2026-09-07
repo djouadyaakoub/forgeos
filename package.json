@@ -1,9 +1,11 @@
 {
   "name": "forgeos",
-  "version": "1.0.0",
+  "license": "MIT",
+  "version": "2.0.0-rc.1",
   "description": "ForgeOS — Universal Development Intelligence Platform",
   "type": "module",
   "private": true,
+  "bin": { "forgeos": "cli/forgeos.mjs" },
   "scripts": {
     "test": "node tests/run-universal.mjs",
     "test:bootstrap": "node tests/bootstrap-stack.test.mjs",
@@ -26,9 +28,39 @@
     "validate-release": "node scripts/release/validate-release.mjs",
     "validate-branding": "node scripts/validate-branding.mjs",
     "test:e2e": "node bootstrap/e2e-orchestrator.mjs",
-    "test:policy": "node policy/tests/run-all.mjs"
+    "test:policy": "node policy/tests/run-all.mjs",
+    "test:stage6": "node tests/runtime-stage6-control-plane.test.mjs && node tests/runtime-openhands-adapter.test.mjs && node tests/runtime-stage6-negative.test.mjs",
+    "test:stage7": "node tests/runtime-stage7-openhands.test.mjs",
+    "test:stage8": "node tests/runtime-stage8-assessment.test.mjs && node tests/runtime-stage8-negative.test.mjs",
+    "test:stage9": "node tests/runtime-stage9-governed-loop.test.mjs && node tests/runtime-stage9-negative.test.mjs",
+    "test:stage10": "node tests/runtime-stage10-verification-evidence.test.mjs && node tests/runtime-stage10-negative.test.mjs",
+    "test:stage11": "node tests/runtime-stage11-main-agent.test.mjs && node tests/runtime-stage11-negative.test.mjs",
+    "test:stage12": "node tests/runtime-stage12-host-native.test.mjs && node tests/runtime-stage12-negative.test.mjs",
+    "test:stage13": "node tests/runtime-stage13-structural.test.mjs && node tests/runtime-stage13-negative.test.mjs",
+    "test:stage14": "node tests/runtime-stage14-capability-operations.test.mjs && node tests/runtime-stage14-negative.test.mjs",
+    "test:stage15": "node tests/runtime-stage15-openhands.test.mjs && node tests/runtime-stage15-negative.test.mjs",
+    "test:stage16": "node tests/runtime-stage16-live-gate.test.mjs",
+    "test:stage17": "node tests/runtime-stage17-alignment.test.mjs",
+    "test:stage19": "node tests/runtime-stage19-babel-parser.test.mjs",
+    "test:stage20": "node tests/runtime-stage20-graph.test.mjs",
+    "test:stage22": "node --test tests/runtime-stage22-invariants.test.mjs",
+    "test:stage23": "node --test tests/runtime-stage23-host-contract.test.mjs",
+    "test:stage24": "node --test tests/runtime-stage24-host-platform.test.mjs",
+    "test:stage25": "node --test tests/runtime-stage25-scope-knowledge.test.mjs",
+    "test:stage26": "node --test tests/runtime-stage26-product.test.mjs",
+    "test:stage27": "node --test tests/runtime-stage27-product.test.mjs",
+    "test:stage28": "node --test tests/runtime-stage28-product.test.mjs",
+    "test:stage29": "node --test tests/runtime-stage29-release-preservation.test.mjs",
+    "test:stage30": "node --test tests/runtime-stage30-exact-approval.test.mjs",
+    "test:stage31a": "node --test tests/runtime-stage31a-semver.test.mjs",
+    "validate:rc-source": "node scripts/release/validate-rc-source.mjs",
+    "test:runtime-execution": "node tests/runtime-execution.test.mjs && node tests/runtime-execution-e2e.test.mjs",
+    "test:runtime-backend": "node tests/runtime-backend-interface.test.mjs"
   },
   "engines": {
     "node": ">=18"
+  },
+  "optionalDependencies": {
+    "@babel/parser": "7.29.8"
   }
 }

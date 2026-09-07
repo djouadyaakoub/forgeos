@@ -17,7 +17,7 @@ export function analyzeDuplication(projectDir, options = {}) {
 
   for (const f of files) {
     const ext = path.extname(f).toLowerCase();
-    if (!['.go', '.ts', '.tsx', '.js', '.jsx'].includes(ext)) continue;
+    if (!['.go', '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'].includes(ext)) continue;
     const full = path.join(projectDir, f);
     let content = '';
     try {

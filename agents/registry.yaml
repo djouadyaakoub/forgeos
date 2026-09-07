@@ -1,8 +1,9 @@
 schema_version: 1
-agent_os_version: "1.0.0"
+agent_os_version: "2.0.0-rc.1"
 
 # Global capability registry — universal specialists only.
 # Project-specific capabilities belong in <project>/.cursor/agents/registry.yaml
+# Stage 8 binding fields live on each capability (single registry, no second catalog).
 
 capabilities:
   - id: orchestration
@@ -12,6 +13,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: orchestration
+    applicability: always
+    assessment_module: forgeos.assessment.generic
+    evidence_schema: capability-assessment
+    verification_strategy: none
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: info
 
   - id: cross-cutting-design
     description: Architecture, ownership routing, contract alignment
@@ -21,6 +30,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: architecture
+    applicability: when_initialized
+    assessment_module: forgeos.assessment.architecture
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: medium
 
   - id: reproduce-bug
     description: Reproduce-first debugging and minimal fixes
@@ -29,6 +46,14 @@ capabilities:
     tool_profile: test
     approval_tier_max: 2
     permanent: true
+    canvas_category: quality
+    applicability: when_has_source
+    assessment_module: forgeos.assessment.generic
+    evidence_schema: capability-assessment
+    verification_strategy: project_verification_commands
+    implementation_types: [host_native, oss_backed]
+    preferred_implementation: host_native
+    default_severity: high
 
   - id: auth-review
     description: Security, auth, secrets, tenancy review
@@ -37,15 +62,33 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 2
     permanent: true
+    canvas_category: security
+    applicability: when_initialized
+    assessment_module: forgeos.assessment.security
+    evidence_schema: capability-assessment
+    verification_strategy: none
+    implementation_types: [host_native, forgeos_native]
+    preferred_implementation: host_native
+    default_severity: high
 
   - id: documentation-sync
     description: Sync durable documentation with verified reality
+    completion_strategy: finding_resolution
     domains: [docs]
     paths_writable: [docs/**, AGENTS.md, **/AGENTS.md]
     specialist_ids: [docs-sync]
     tool_profile: implement-local
     approval_tier_max: 1
     permanent: true
+    canvas_category: documentation
+    applicability: always
+    assessment_module: forgeos.assessment.documentation
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    # Stage 15: oss_backed enables OpenHands Runtime path for create-missing-project-docs
+    implementation_types: [host_native, forgeos_native, oss_backed]
+    preferred_implementation: host_native
+    default_severity: medium
 
   - id: structure-audit
     description: Analyze codebase structure health, misplaced files, mixed responsibilities
@@ -54,6 +97,32 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: organization
+    applicability: when_has_source
+    assessment_module: forgeos.assessment.structure
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    implementation_types: [forgeos_native, host_native, oss_derived]
+    preferred_implementation: forgeos_native
+    default_severity: medium
+
+  - id: structural-ast-analysis
+    description: Deterministic JS/JSX/TS/TSX AST structural facts via optional OSS-derived @babel/parser
+    domains: [structure, intelligence]
+    specialist_ids: []
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+    canvas_category: organization
+    applicability: when_has_source
+    assessment_module: forgeos.assessment.structure
+    evidence_schema: capability-assessment
+    verification_strategy: none
+    implementation_types: [oss_derived, forgeos_native]
+    preferred_implementation: oss_derived
+    oss_derived_id: babel-parser
+    oss_derived_execution_mode: forgeos_native
+    default_severity: medium
 
   - id: codebase-organization
     description: Structure plans, safe moves, organization with risk classification
@@ -63,6 +132,15 @@ capabilities:
     tool_profile: implement-local
     approval_tier_max: 2
     permanent: true
+    canvas_category: organization
+    applicability: when_has_source
+    assessment_module: forgeos.assessment.structure
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    implementation_types: [host_native, oss_backed, forgeos_native]
+    preferred_implementation: host_native
+    default_severity: medium
+    requires: [structure-audit]
 
   - id: solution-research
     description: Evidence-based technical research before implementation
@@ -72,6 +150,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: research
+    applicability: when_initialized
+    assessment_module: forgeos.assessment.generic
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    implementation_types: [host_native, forgeos_native]
+    preferred_implementation: host_native
+    default_severity: low
 
   - id: dependency-audit
     description: Detect unused, duplicate, conflicting, or security-sensitive dependencies
@@ -80,6 +166,30 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: dependencies
+    applicability: when_has_source
+    assessment_module: forgeos.assessment.dependencies
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: medium
+
+  - id: dependency-graph-intelligence
+    description: Deterministic import/dependency graph and structural change-impact inputs from StructuralFacts
+    domains: [structure, dependencies]
+    specialist_ids: []
+    tool_profile: read-explore
+    approval_tier_max: 1
+    permanent: true
+    canvas_category: architecture
+    applicability: when_has_source
+    assessment_module: forgeos.assessment.graph
+    evidence_schema: capability-assessment
+    verification_strategy: none
+    implementation_types: [forgeos_native]
+    preferred_implementation: forgeos_native
+    default_severity: medium
 
   - id: dead-code-analysis
     description: Identify dead code candidates with evidence — no auto-delete
@@ -88,6 +198,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: organization
+    applicability: when_has_source
+    assessment_module: forgeos.assessment.dead_code
+    evidence_schema: capability-assessment
+    verification_strategy: none
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: low
 
   - id: duplication-analysis
     description: Detect duplicate logic, services, components — consolidation proposals only
@@ -96,6 +214,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: organization
+    applicability: when_has_source
+    assessment_module: forgeos.assessment.duplication
+    evidence_schema: capability-assessment
+    verification_strategy: none
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: low
 
   - id: architecture-guard
     description: Detect architecture layer violations against docs, ADRs, contracts
@@ -104,6 +230,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: architecture
+    applicability: when_initialized
+    assessment_module: forgeos.assessment.architecture
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: medium
 
   - id: change-impact
     description: Analyze impact of changes on dependents, tests, agents, deployment
@@ -112,14 +246,31 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: architecture
+    applicability: when_has_source
+    assessment_module: forgeos.assessment.change_impact
+    evidence_schema: capability-assessment
+    verification_strategy: none
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: medium
 
   - id: documentation-drift
     description: Compare implementation vs AGENTS.md, architecture, ADRs, README
+    completion_strategy: finding_resolution
     domains: [docs, quality]
     specialist_ids: [docs-sync]
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: documentation
+    applicability: always
+    assessment_module: forgeos.assessment.documentation
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: medium
 
   - id: test-coverage-strategy
     description: Determine if changes have appropriate test coverage
@@ -128,6 +279,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: testing
+    applicability: when_has_source
+    assessment_module: forgeos.assessment.testing
+    evidence_schema: capability-assessment
+    verification_strategy: project_verification_commands
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: medium
 
   - id: safe-refactor
     description: Behavior-preserving refactor workflow with baseline and verification
@@ -136,6 +295,15 @@ capabilities:
     tool_profile: test
     approval_tier_max: 2
     permanent: true
+    canvas_category: organization
+    applicability: when_has_source
+    assessment_module: forgeos.assessment.generic
+    evidence_schema: capability-assessment
+    verification_strategy: project_verification_commands
+    implementation_types: [host_native, oss_backed]
+    preferred_implementation: host_native
+    default_severity: medium
+    requires: [architecture-guard]
 
   - id: performance-investigation
     description: Measure-first performance investigation methodology
@@ -144,6 +312,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: performance
+    applicability: when_has_source
+    assessment_module: forgeos.assessment.generic
+    evidence_schema: capability-assessment
+    verification_strategy: none
+    implementation_types: [host_native, forgeos_native]
+    preferred_implementation: host_native
+    default_severity: low
 
   - id: knowledge-curation
     description: Classify temporary vs permanent project knowledge — no secrets
@@ -152,6 +328,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: knowledge
+    applicability: when_initialized
+    assessment_module: forgeos.assessment.generic
+    evidence_schema: capability-assessment
+    verification_strategy: none
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: low
 
   - id: project-archaeology
     description: Git history and docs investigation for why code exists
@@ -160,6 +344,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: knowledge
+    applicability: when_initialized
+    assessment_module: forgeos.assessment.generic
+    evidence_schema: capability-assessment
+    verification_strategy: none
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: low
 
   - id: release-readiness
     description: Pre-release assessment across tests, security, docs, deployment
@@ -168,6 +360,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 2
     permanent: true
+    canvas_category: release
+    applicability: when_initialized
+    assessment_module: forgeos.assessment.release
+    evidence_schema: capability-assessment
+    verification_strategy: project_verification_commands
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: high
 
   - id: deployment-discovery
     description: Discover deployment targets from project evidence and adapter
@@ -176,6 +376,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: deployment
+    applicability: when_deployable
+    assessment_module: forgeos.assessment.deployment
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: medium
 
   - id: deployment-plan
     description: Create reviewable deployment plans before execution
@@ -184,6 +392,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 2
     permanent: true
+    canvas_category: deployment
+    applicability: when_deployable
+    assessment_module: forgeos.assessment.deployment
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: high
 
   - id: deployment-build
     description: Build artifacts with evidence recording
@@ -192,6 +408,14 @@ capabilities:
     tool_profile: test
     approval_tier_max: 2
     permanent: true
+    canvas_category: deployment
+    applicability: when_deployable
+    assessment_module: forgeos.assessment.deployment
+    evidence_schema: capability-assessment
+    verification_strategy: project_verification_commands
+    implementation_types: [host_native, oss_backed]
+    preferred_implementation: host_native
+    default_severity: high
 
   - id: deployment-execute
     description: Execute approved deployments — policy-gated, never self-approves
@@ -200,6 +424,14 @@ capabilities:
     tool_profile: release
     approval_tier_max: 3
     permanent: true
+    canvas_category: deployment
+    applicability: when_deployable
+    assessment_module: forgeos.assessment.deployment
+    evidence_schema: capability-assessment
+    verification_strategy: project_verification_commands
+    implementation_types: [host_native, oss_backed]
+    preferred_implementation: host_native
+    default_severity: critical
 
   - id: deployment-verify
     description: Post-deploy health checks, smoke tests, version verification
@@ -208,6 +440,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 2
     permanent: true
+    canvas_category: deployment
+    applicability: when_deployable
+    assessment_module: forgeos.assessment.deployment
+    evidence_schema: capability-assessment
+    verification_strategy: project_verification_commands
+    implementation_types: [host_native, forgeos_native]
+    preferred_implementation: host_native
+    default_severity: high
 
   - id: health-check
     description: HTTP, WebSocket, CLI, database, worker, platform health checks
@@ -216,6 +456,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 2
     permanent: true
+    canvas_category: deployment
+    applicability: when_deployable
+    assessment_module: forgeos.assessment.deployment
+    evidence_schema: capability-assessment
+    verification_strategy: project_verification_commands
+    implementation_types: [host_native, forgeos_native]
+    preferred_implementation: host_native
+    default_severity: high
 
   - id: smoke-test
     description: Project-aware smoke tests from deployment profile
@@ -224,6 +472,14 @@ capabilities:
     tool_profile: test
     approval_tier_max: 2
     permanent: true
+    canvas_category: deployment
+    applicability: when_deployable
+    assessment_module: forgeos.assessment.deployment
+    evidence_schema: capability-assessment
+    verification_strategy: project_verification_commands
+    implementation_types: [host_native, oss_backed]
+    preferred_implementation: host_native
+    default_severity: high
 
   - id: rollback-plan
     description: Rollback strategy before production deployment
@@ -232,6 +488,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 2
     permanent: true
+    canvas_category: deployment
+    applicability: when_deployable
+    assessment_module: forgeos.assessment.deployment
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: high
 
   - id: rollback-execute
     description: Execute approved rollback — Tier 3, separate approval required
@@ -240,6 +504,14 @@ capabilities:
     tool_profile: release
     approval_tier_max: 3
     permanent: true
+    canvas_category: deployment
+    applicability: when_deployable
+    assessment_module: forgeos.assessment.deployment
+    evidence_schema: capability-assessment
+    verification_strategy: project_verification_commands
+    implementation_types: [host_native, oss_backed]
+    preferred_implementation: host_native
+    default_severity: critical
 
   - id: environment-discovery
     description: Detect local, development, staging, production environments
@@ -248,6 +520,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: environment
+    applicability: when_initialized
+    assessment_module: forgeos.assessment.environment
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: medium
 
   - id: environment-audit
     description: Audit environment config shape without reading secret values
@@ -256,6 +536,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 2
     permanent: true
+    canvas_category: environment
+    applicability: when_initialized
+    assessment_module: forgeos.assessment.environment
+    evidence_schema: capability-assessment
+    verification_strategy: none
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: high
 
   - id: environment-diff
     description: Compare environment configuration shape across environments
@@ -264,6 +552,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 1
     permanent: true
+    canvas_category: environment
+    applicability: when_initialized
+    assessment_module: forgeos.assessment.environment
+    evidence_schema: capability-assessment
+    verification_strategy: none
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: medium
 
   - id: release-notes
     description: Evidence-based release notes from tasks and changes
@@ -272,6 +568,14 @@ capabilities:
     tool_profile: implement-local
     approval_tier_max: 1
     permanent: true
+    canvas_category: release
+    applicability: when_initialized
+    assessment_module: forgeos.assessment.release
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    implementation_types: [host_native, forgeos_native]
+    preferred_implementation: host_native
+    default_severity: low
 
   - id: artifact-verification
     description: Verify build artifacts before deployment
@@ -280,6 +584,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 2
     permanent: true
+    canvas_category: deployment
+    applicability: when_deployable
+    assessment_module: forgeos.assessment.deployment
+    evidence_schema: capability-assessment
+    verification_strategy: presence
+    implementation_types: [forgeos_native, host_native]
+    preferred_implementation: forgeos_native
+    default_severity: high
 
   - id: post-deploy-monitoring
     description: Bounded post-deploy observation window
@@ -288,6 +600,14 @@ capabilities:
     tool_profile: read-explore
     approval_tier_max: 2
     permanent: true
+    canvas_category: deployment
+    applicability: when_deployable
+    assessment_module: forgeos.assessment.deployment
+    evidence_schema: capability-assessment
+    verification_strategy: none
+    implementation_types: [host_native, forgeos_native]
+    preferred_implementation: host_native
+    default_severity: medium
 
 matching:
   rules:

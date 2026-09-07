@@ -1,0 +1,17 @@
+schema_id: forgeos-capability-discovery
+schema_version: 1
+validator: intelligence/capability/discovery.mjs
+source_kinds: [OSS_LIBRARY, OSS_METHODOLOGY, API, MCP, MODEL_PROVIDER, OPTIONAL_RUNTIME, HOST_CAPABILITY]
+required: [candidate_id, source_kind, name, description, source, url, revision, license, discovered_at, expires_at, claims, requirements, provenance]
+nullable: [revision, license]
+requirements: {network: boolean_or_null, docker: boolean_or_null, external_runtime: boolean_or_null}
+provenance: [observer, evidence]
+states: [DISCOVERED, ASSESSED, ELIGIBLE, REJECTED, STALE, UNKNOWN]
+assessment: metadata_only_not_claim_verification
+eligibility: complete_pinned_metadata_supported_license_manual_registration_review_only
+unknown_fields: rejected
+urls: https_metadata_only
+registry_mutation: forbidden
+execution: forbidden
+policy_approval: false
+project_local_store: .agent-os/discovery/candidates.json

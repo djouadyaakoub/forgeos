@@ -1,6 +1,7 @@
 {
   "release": {
-    "version": "1.0.0",
+    "license": "MIT",
+    "version": "2.0.0-rc.1",
     "plugin_id": "forgeos",
     "adapter": {
       "min_schema": 1,
@@ -8,7 +9,7 @@
     },
     "min_adapter_schema_version": 1,
     "required_features": [],
-    "breaking": false,
+    "breaking": true,
     "migrations": {
       "available": true
     },
@@ -18,8 +19,8 @@
     },
     "artifacts": [
       {
-        "name": "forgeos-1.0.0.zip",
-        "sha256": "2d7a69e0b9199cb528ec7f8da236743084cbbfa9d285eebd36f696b3a7531c6b"
+        "name": "forgeos-2.0.0-rc.1.zip",
+        "sha256": "b2957a0abe1a25a6ed7c712db75f1f7aa4b60cbcb24232407795143e7307c18f"
       }
     ],
     "adapters": {
@@ -28,6 +29,20 @@
       }
     },
     "version_history": [
+      {
+        "version": "2.0.0-rc.1",
+        "date": "2026-09-07",
+        "breaking": true,
+        "security": true,
+        "compatibility": "adapter_schema_1_explicit_major_version_review"
+      },
+      {
+        "version": "1.0.1",
+        "date": "2026-09-03",
+        "breaking": false,
+        "security": false,
+        "compatibility": "adapter_schema_1"
+      },
       {
         "version": "1.0.0",
         "date": "2026-09-02",
@@ -39,7 +54,7 @@
     "supply_chain": {
       "repository": "forgeos",
       "source": "github_release",
-      "owner": ""
+      "owner": "djouadyaakoub"
     }
   }
 }

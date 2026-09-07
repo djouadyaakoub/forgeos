@@ -2,8 +2,19 @@
  * Agent capability discovery and specialist scoring
  */
 export function discoverCapabilities(registry = {}, projectAdapter = {}) {
-  const global = registry.capabilities || [];
-  const project = projectAdapter.capabilities || [];
+  const globalRaw = registry.capabilities;
+  const projectRaw = projectAdapter.capabilities;
+
+  const global = globalRaw == null ? [] : globalRaw;
+  const project = projectRaw == null ? [] : projectRaw;
+
+  if (!Array.isArray(global)) {
+    throw new Error('discoverCapabilities: registry.capabilities must be an array');
+  }
+  if (!Array.isArray(project)) {
+    throw new Error('discoverCapabilities: projectAdapter.capabilities must be an array (empty [] is valid)');
+  }
+
   const merged = new Map();
 
   for (const cap of global) {

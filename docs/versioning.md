@@ -2,15 +2,15 @@
 
 ## Agent OS version
 
-Current: **1.0.0** (see `policy/rules.json` `agent_os_version`)
+Current: **2.0.0-rc.1**, a prerelease (canonical source: `package.json`; synchronized with `policy/rules.json`).
 
-Semantic versioning: `major.minor.patch`
+Semantic versioning: `major.minor.patch-prerelease+build`. Stable outranks prerelease for the same core; build metadata does not affect precedence.
 
 ## Project compatibility
 
 ```yaml
 agent_os:
-  version: ">=1.0 <2.0"
+  version: ">=2.0 <3.0"
 ```
 
 ## Update model

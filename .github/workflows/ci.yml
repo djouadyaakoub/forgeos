@@ -8,13 +8,30 @@ on:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            node: '22'
+          - os: windows-latest
+            node: '22'
+          - os: macos-latest
+            node: '22'
+          - os: ubuntu-latest
+            node: '18' # Engine-floor compatibility only, not a security-support promise.
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Locked optional dependency installation (no lifecycle scripts)
+        run: npm ci --ignore-scripts --no-audit --no-fund
 
       - name: Secret scan
         run: node scripts/security/secret-scan.mjs
@@ -40,8 +57,20 @@ jobs:
           npm run test:intelligence
           npm run test:orchestration
           npm run test:deployment
+          npm run test:neutrality
+          npm run test:stage22
+          npm run test:stage23
+          npm run test:stage24
+          npm run test:stage25
+          npm run test:stage26
+          npm run test:stage27
+          npm run test:stage28
 
       - name: Release validation (no tag)
         run: node scripts/release/validate-release.mjs
         env:
           AGENT_OS_SKIP_FULL_REGRESSION: '1'
+
+      - name: Clean INCLUDE-only source reproduction
+        if: matrix.os == 'windows-latest'
+        run: npm run validate:rc-source

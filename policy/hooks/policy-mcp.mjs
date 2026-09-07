@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { evaluateMcp, hookOutput, readStdinJson } from '../engine.mjs';
+import { evaluateMcp, hookOutput, readStdinJson } from '../authority.mjs';
 import { initHookRuntime } from '../runtime.mjs';
 
 try {
@@ -13,6 +13,7 @@ try {
   process.stdout.write(
     JSON.stringify({
       permission: 'deny',
+      authority: 'forgeos',
       user_message: 'MCP policy hook error — call blocked (fail closed).',
       agent_message: `policy-mcp error: ${err.message}`,
     })

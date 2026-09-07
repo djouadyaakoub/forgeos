@@ -17,6 +17,21 @@ capability:
   playbook: string
   permanent: boolean
   scope: global | project
+  # Stage 8 capability binding (optional on project capabilities; required on global registry)
+  canvas_category: string
+  applicability: always | when_initialized | when_has_source | when_application | when_deployable
+  assessment_module: string
+  evidence_schema: string
+  verification_strategy: none | presence | project_verification_commands
+  completion_strategy: optional product completion floor; finding_resolution for documentation capabilities
+  implementation_types: [host_native, forgeos_native, oss_derived, optional_runtime, oss_backed]
+  preferred_implementation: host_native | forgeos_native | oss_derived | optional_runtime | oss_backed
+  # Stage 17: oss_backed is LEGACY alias for optional_runtime (external RuntimeBackend).
+  # oss_derived means OSS provenance executed in ForgeOS/host — NOT an external launcher.
+  default_severity: critical | high | medium | low | info
+  freshness_ttl: integer
+  requires: [capability_id]
+  # Stage 11: explicit capability dependencies (cycle-detectable, inspectable)
 
 matching:
   inputs:

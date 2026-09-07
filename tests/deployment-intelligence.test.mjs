@@ -3,6 +3,7 @@
  * Phase 15 — Release & Deployment Intelligence tests
  */
 import fs from 'node:fs';
+import { temporaryFixtures } from './helpers/temporary-fixtures.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
@@ -38,7 +39,10 @@ import { loadGlobalRules } from '../policy/project-adapter.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.dirname(ROOT);
-const SAMPLE = path.join(REPO, 'tests/fixtures/sample-project');
+const SAMPLE = path.join(temporaryFixtures(path.join(REPO,'tests/fixtures')), 'sample-project');
+// Explicit synthetic environment inputs: no dependence on ignored developer files.
+fs.writeFileSync(path.join(SAMPLE,'.env.development'),'API_BASE_URL=http://localhost:3000\nNODE_ENV=development\n');
+fs.writeFileSync(path.join(SAMPLE,'.env.production'),'API_BASE_URL=https://example.com\nNODE_ENV=production\n');
 const FIXTURE_A = path.join(REPO, 'tests/fixtures/project-a');
 const SPEED_FLEXY = 'C:/Apps/speed-flexy-server';
 
@@ -105,7 +109,7 @@ test('discovery returns evidence per target', () => {
 
 console.log('\n--- Speed Flexy read-only discovery ---');
 test('Speed Flexy discovers fly.io, cloudflare, supabase (read-only)', () => {
-  if (!fs.existsSync(SPEED_FLEXY)) return;
+  if (process.env.FORGEOS_LIVE_PROJECT_TESTS !== '1' || !fs.existsSync(SPEED_FLEXY)) return;
   const before = fs.statSync(path.join(SPEED_FLEXY, '.agent-os/project.yaml')).mtimeMs;
   const d = discoverDeploymentTargets({ project_dir: SPEED_FLEXY, project_adapter: {} });
   const after = fs.statSync(path.join(SPEED_FLEXY, '.agent-os/project.yaml')).mtimeMs;

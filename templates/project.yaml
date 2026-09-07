@@ -1,10 +1,20 @@
 schema_version: 1
 
-# Universal Agent OS — project adapter manifest
-# Location: .agent-os/project.yaml
+contract:
+  version: 1
 
+# ForgeOS — Project Intelligence Contract template
+# Location: .agent-os/project.yaml  (canonical persistence)
+# See: docs/architecture/PROJECT-INTELLIGENCE-CONTRACT.md
+
+forgeos:
+  version: ">=2.0 <3.0"
+  adapter_schema_version: 1
+
+# Legacy alias (read-time compatible)
 agent_os:
-  version: ">=1.0 <2.0"   # compatible Agent OS version range
+  version: ">=2.0 <3.0"
+  adapter_schema_version: 1
 
 project:
   id: my-project
@@ -12,20 +22,20 @@ project:
   type: application      # application | library | monorepo | infrastructure
   task_id_prefix: PROJ   # task IDs: PROJ-YYYYMMDD-NNN
 
+# Optional DECLARED host preference, never execution approval:
+# host:
+#   preferred: codex
+
+# DISCOVERED — stack signals; not ownership authority
 stack:
-  backend: []            # e.g. go, node
-  frontend: []
-  mobile: []
-  desktop: []
-  database: []
+  detected: []
+  components: {}
 
 paths:
-  backend:
-  frontend:
-  mobile:
   docs: docs/
   tasks: docs/project/tasks/
 
+# DECLARED knowledge pointers — never silently promote to global ForgeOS knowledge
 knowledge:
   stack: docs/STACK.md
   architecture: docs/architecture/
@@ -34,22 +44,18 @@ knowledge:
   tasks: docs/project/tasks/
   lessons: docs/runbooks/lessons/
 
-capabilities:
-  - id: example-capability
-    description: Project-specific capability
-    domains: [backend]
-    paths: [src/**]
-    agents: [backend-specialist]
+# DECLARED — empty [] is a valid greenfield contract
+capabilities: []
 
-agents:
-  backend-specialist:
-    tool_profile: implement-local
-    approval_tier_max: 2
-    paths_writable: [src/**]
+# AUTHORITATIVE mapping (object), not a list
+agents: {}
+
+# AUTHORITATIVE
+ownership: []
 
 policy:
   protected_paths: []
-  tier3_operations: []   # project-specific Tier 3 ops (additive to global)
+  tier3_operations: []   # additive to global Tier 3 baseline
   shell_rules: []
   mcp_rules: []
 
@@ -58,3 +64,7 @@ integrations:
 
 verification:
   commands: []
+
+# Constraints for a future Runtime Router — does NOT select a backend
+runtime:
+  requirements: {}

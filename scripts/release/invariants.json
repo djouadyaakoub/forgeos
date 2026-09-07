@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "invariants": [
+    {
+      "id": "tier3-exact-approval-binding",
+      "description": "Supported Local Executor Tier-3 dispatch binds exact input, task, workspace and current scope and consumes once before effect; unsupported intercepted paths deny.",
+      "enforcers": ["policy/exact-approval.mjs", "policy/authority.mjs", "policy/engine.mjs", "runtime/adapters/local-executor.mjs", "tests/runtime-stage30-exact-approval.test.mjs"]
+    },
+    {
+      "id": "forgeos-policy-authority",
+      "description": "ForgeOS stamps Policy decisions; hosts translate rather than replace authority.",
+      "enforcers": ["policy/authority.mjs", "tests/policy-authority.test.mjs"]
+    },
+    {
+      "id": "policy-deny-blocks-execution",
+      "description": "The governed execution path blocks a Policy DENY before backend execution.",
+      "enforcers": ["runtime/execution.mjs", "tests/runtime-stage17-alignment.test.mjs"]
+    },
+    {
+      "id": "runtime-success-is-not-verification",
+      "description": "Runtime completion alone cannot establish ForgeOS capability verification PASS.",
+      "enforcers": ["intelligence/orchestrator/capability-verification.mjs", "tests/runtime-stage10-verification-evidence.test.mjs", "tests/runtime-stage10-negative.test.mjs"]
+    },
+    {
+      "id": "fresh-verification-before-satisfied",
+      "description": "The assessment merge requires valid fresh ForgeOS governance evidence before SATISFIED.",
+      "enforcers": ["intelligence/assessment/evidence.mjs", "intelligence/orchestrator/governance-evidence.mjs", "tests/runtime-stage10-negative.test.mjs"]
+    },
+    {
+      "id": "resolver-does-not-execute",
+      "description": "Capability and operation resolution select implementations without executing tasks.",
+      "enforcers": ["intelligence/capability/resolver.mjs", "tests/runtime-stage14-negative.test.mjs"]
+    },
+    {
+      "id": "core-assess-plan-without-optional-runtime",
+      "description": "Core assessment and planning work without OpenHands or Docker; external runtime is optional.",
+      "enforcers": ["intelligence/capability/implementation-kinds.mjs", "tests/runtime-stage17-alignment.test.mjs"]
+    },
+    {
+      "id": "host-handoff-existing-workspace",
+      "description": "The host-native handoff binds work to the existing project workspace.",
+      "enforcers": ["intelligence/orchestrator/host-handoff.mjs", "tests/runtime-stage17-alignment.test.mjs"]
+    },
+    {
+      "id": "permanent-markdown-agent-freeze",
+      "description": "Permanent Markdown specialist agent growth is rejected against the frozen set.",
+      "enforcers": ["intelligence/capability/permanent-agent-freeze.mjs", "tests/runtime-stage17-alignment.test.mjs"]
+    },
+    {
+      "id": "oss-derived-is-not-runtime-launcher",
+      "description": "OSS_DERIVED descriptors reject external runtime launch and preserve ForgeOS authority.",
+      "enforcers": ["intelligence/capability/oss-derived.mjs", "intelligence/capability/implementation-kinds.mjs", "tests/runtime-stage17-alignment.test.mjs"]
+    }
+  ]
+}

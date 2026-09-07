@@ -29,3 +29,14 @@ release/release-candidate.json
 # OS
 .DS_Store
 Thumbs.db
+
+# Maintainer project state: retain locally, never bundle or require for source reproduction.
+/.agent-os/
+/docs/project/
+# Test-generated state, not canonical fixture inputs.
+/tests/fixtures/**/docs/project/
+/tests/fixtures/**/*.backup-*
+/tests/fixtures/**/*.forgeos-backup-*
+# Rebuildable output; tracked legacy artifacts require an explicit future commit decision.
+/release/*.zip
+/release/checksums.json

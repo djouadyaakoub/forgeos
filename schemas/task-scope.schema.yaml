@@ -1,0 +1,11 @@
+schema_id: forgeos-task-scope
+schema_version: 1
+authority: containment_only_not_authorization
+validator: policy/task-scope.mjs
+required: [schema, schema_version, task_id, workspace, project_id, context_fingerprint, allowed_paths, denied_paths, allowed_capabilities, allowed_operations, expected_effects, permitted_action_classes, fingerprint]
+paths: relative_only_no_traversal_or_symlinks
+patterns: exact_path_or_segment_star_question_or_globstar
+denied_precedence: true
+fingerprint: existing_fingerprintText_of_stableStringify_canonical_body
+freshness: current_project_manifest_text
+note: Checksum is not a signature. Legacy candidates bind at workspace-aware boundary.

@@ -1,0 +1,20 @@
+schema_id: forgeos-task-approval
+schema_version: 1
+
+fields:
+  task_id: { type: string, required: true }
+  capability_id: { type: string, required: true }
+  approved: { type: boolean, required: true }
+  approved_by: { type: string }
+  approved_at: { type: string, format: iso8601 }
+  expires_at: { type: string, format: iso8601 }
+  operation_fingerprint: { type: string, optional: true }
+  nonce: { type: string }
+  transferable: { type: boolean, value: false }
+  blanket: { type: boolean, value: false }
+
+invariants:
+  - approval is task-scoped
+  - approval is not Policy Authority
+  - task A cannot authorize task B
+  - expired approval is invalid

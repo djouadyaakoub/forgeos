@@ -620,9 +620,15 @@ export function adapterToYaml(adapter, profileMeta = {}) {
   const emit = (s) => lines.push(s);
 
   emit('schema_version: 1');
+  emit('contract:');
+  emit('  version: 1');
   emit('');
   emit('agent_os:');
-  emit('  version: ">=1.0 <2.0"');
+  emit('  version: ">=2.0 <3.0"');
+  emit('  adapter_schema_version: 1');
+  emit('forgeos:');
+  emit('  version: ">=2.0 <3.0"');
+  emit('  adapter_schema_version: 1');
   emit('');
   emit('project:');
   emit(`  id: ${profileMeta.id || 'project'}`);
@@ -658,18 +664,21 @@ export function adapterToYaml(adapter, profileMeta = {}) {
   }
   emit('');
 
-  emit('capabilities:');
-  for (const cap of adapter.capabilities || []) {
-    emit(`  - id: ${cap.id}`);
-    if (cap.description) emit(`    description: ${cap.description}`);
-    if (cap.domains?.length) emit(`    domains: [${cap.domains.join(', ')}]`);
-    if (cap.paths?.length) emit(`    paths: [${cap.paths.map((p) => `"${p}"`).join(', ')}]`);
-    emit(`    agent: ${cap.agent}`);
-    if (cap.verification?.length) emit(`    verification: [${cap.verification.join(', ')}]`);
-    if (cap.playbook) emit(`    playbook: ${cap.playbook}`);
-    emit(`    source: ${cap.source}`);
+  if (!adapter.capabilities?.length) {
+    emit('capabilities: []');
+  } else {
+    emit('capabilities:');
+    for (const cap of adapter.capabilities || []) {
+      emit(`  - id: ${cap.id}`);
+      if (cap.description) emit(`    description: ${cap.description}`);
+      if (cap.domains?.length) emit(`    domains: [${cap.domains.join(', ')}]`);
+      if (cap.paths?.length) emit(`    paths: [${cap.paths.map((p) => `"${p}"`).join(', ')}]`);
+      emit(`    agent: ${cap.agent}`);
+      if (cap.verification?.length) emit(`    verification: [${cap.verification.join(', ')}]`);
+      if (cap.playbook) emit(`    playbook: ${cap.playbook}`);
+      emit(`    source: ${cap.source}`);
+    }
   }
-  if (!adapter.capabilities?.length) emit('  []');
   emit('');
 
   emit('agents:');
@@ -702,15 +711,18 @@ export function adapterToYaml(adapter, profileMeta = {}) {
   }
   emit('');
 
-  emit('ownership:');
-  for (const o of adapter.ownership || []) {
-    emit(`  - agent: ${o.agent}`);
-    if (o.paths?.length) emit(`    paths: [${o.paths.map((p) => `"${p}"`).join(', ')}]`);
-    if (o.writable?.length) emit(`    writable: [${o.writable.map((p) => `"${p}"`).join(', ')}]`);
-    if (o.forbidden?.length) emit(`    forbidden: [${o.forbidden.map((p) => `"${p}"`).join(', ')}]`);
-    emit(`    source: ${o.source}`);
+  if (!adapter.ownership?.length) {
+    emit('ownership: []');
+  } else {
+    emit('ownership:');
+    for (const o of adapter.ownership || []) {
+      emit(`  - agent: ${o.agent}`);
+      if (o.paths?.length) emit(`    paths: [${o.paths.map((p) => `"${p}"`).join(', ')}]`);
+      if (o.writable?.length) emit(`    writable: [${o.writable.map((p) => `"${p}"`).join(', ')}]`);
+      if (o.forbidden?.length) emit(`    forbidden: [${o.forbidden.map((p) => `"${p}"`).join(', ')}]`);
+      emit(`    source: ${o.source}`);
+    }
   }
-  if (!adapter.ownership?.length) emit('  []');
   emit('');
 
   emit('policy:');
@@ -764,16 +776,19 @@ export function adapterToYaml(adapter, profileMeta = {}) {
   }
 
   emit('integrations:');
-  emit('  mcp:');
-  for (const m of adapter.integrations?.mcp || []) {
-    emit(`    - id: ${m.id}`);
-    emit(`      purpose: ${m.purpose}`);
-    emit(`      enabled: ${m.enabled}`);
-    emit(`      type: ${m.type}`);
-    if (m.agents?.length) emit(`      agents: [${m.agents.join(', ')}]`);
-    emit(`      source: ${m.source}`);
+  if (!adapter.integrations?.mcp?.length) {
+    emit('  mcp: []');
+  } else {
+    emit('  mcp:');
+    for (const m of adapter.integrations?.mcp || []) {
+      emit(`    - id: ${m.id}`);
+      emit(`      purpose: ${m.purpose}`);
+      emit(`      enabled: ${m.enabled}`);
+      emit(`      type: ${m.type}`);
+      if (m.agents?.length) emit(`      agents: [${m.agents.join(', ')}]`);
+      emit(`      source: ${m.source}`);
+    }
   }
-  if (!adapter.integrations?.mcp?.length) emit('    []');
   emit('');
 
   if (adapter.deployment?.providers?.length) {
@@ -789,14 +804,22 @@ export function adapterToYaml(adapter, profileMeta = {}) {
   }
 
   emit('verification:');
-  emit('  commands:');
-  for (const c of adapter.verification?.commands || []) {
-    emit(`    - name: ${c.name}`);
-    emit(`      command: "${c.command.replace(/"/g, '\\"')}"`);
-    emit(`      scope: ${c.scope}`);
-    emit(`      source: ${c.source}`);
+  if (!adapter.verification?.commands?.length) {
+    emit('  commands: []');
+  } else {
+    emit('  commands:');
+    for (const c of adapter.verification?.commands || []) {
+      emit(`    - name: ${c.name}`);
+      emit(`      command: "${c.command.replace(/"/g, '\\"')}"`);
+      emit(`      scope: ${c.scope}`);
+      emit(`      source: ${c.source}`);
+    }
   }
-  if (!adapter.verification?.commands?.length) emit('    []');
+  emit('');
+
+  // Runtime requirements are constraints for a future Runtime Router (no backend selection).
+  emit('runtime:');
+  emit('  requirements: {}');
 
   return lines.join('\n') + '\n';
 }

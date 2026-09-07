@@ -12,7 +12,7 @@ export function analyzeDeadCode(projectDir, options = {}) {
   for (const f of files) {
     const base = path.basename(f).toLowerCase();
     const ext = path.extname(f).toLowerCase();
-    if (!['.go', '.ts', '.tsx', '.js', '.jsx', '.dart'].includes(ext)) continue;
+    if (!['.go', '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.dart'].includes(ext)) continue;
 
     if (base.includes('unused') || base.includes('deprecated') || base.includes('.bak')) {
       candidates.push({

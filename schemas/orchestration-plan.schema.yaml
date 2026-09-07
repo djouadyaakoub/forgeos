@@ -1,0 +1,52 @@
+schema_id: forgeos-orchestration-plan
+schema_version: 1
+
+# Stage 11 Main Agent orchestration plan — advisory, plan-only.
+# Never authorizes execution. Never starts a runtime.
+
+fields:
+  schema:
+    type: string
+    value: forgeos-orchestration-plan
+  plan_id:
+    type: string
+    note: Deterministic fingerprint — not a timestamp
+  plan_fingerprint:
+    type: string
+  intent:
+    type: object
+  requested_outcome:
+    type: string
+  capabilities:
+    type: array
+  task_candidates:
+    type: array
+    note: Stage 9 forgeos-task-candidate shape
+  dependencies:
+    type: array
+    items:
+      from: capability_id
+      to: capability_id
+  unresolved:
+    type: array
+  unresolved_questions:
+    type: array
+  risk_summary:
+    type: object
+    properties:
+      level: { enum: [LOW, MEDIUM, HIGH, UNKNOWN] }
+  execution_status:
+    type: string
+    value: NOT_STARTED
+  approval_required:
+    type: boolean
+    value: true
+  boundaries:
+    type: object
+    note: executes=false; policy_authority=false; calls_backend_start=false
+
+authority:
+  plan: advisory
+  policy: policy/authority.mjs
+  execution: runtime/execution.mjs via coordinateGovernedExecution only
+  project_intelligence: never_modified_by_plan

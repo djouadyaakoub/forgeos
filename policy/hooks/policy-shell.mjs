@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { evaluateShell, hookOutput, readStdinJson } from '../engine.mjs';
+import { evaluateShell, hookOutput, readStdinJson } from '../authority.mjs';
 import { initHookRuntime } from '../runtime.mjs';
 
 try {
@@ -13,6 +13,7 @@ try {
   process.stdout.write(
     JSON.stringify({
       permission: 'deny',
+      authority: 'forgeos',
       user_message: 'Shell policy hook error — command blocked (fail closed).',
       agent_message: `policy-shell error: ${err.message}`,
     })

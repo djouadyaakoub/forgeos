@@ -1,0 +1,6 @@
+# Optional project-local ForgeOS state. Keep policy/manifest choices under your own review.
+/.agent-os/knowledge/
+/.agent-os/discovery/
+/.agent-os/interpretations.json
+/docs/project/tasks/
+/docs/project/assessments/

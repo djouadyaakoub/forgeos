@@ -8,6 +8,20 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { resolveProjectDir, resolveProjectDirFromCandidates, collectProjectCandidates } from './runtime.mjs';
 import { resolveTestDirFromEnv } from './identity.mjs';
+import {
+  toProjectIntelligenceContract,
+  validateProjectIntelligenceContract,
+  CURRENT_CONTRACT_VERSION,
+} from './project-intelligence-contract.mjs';
+
+export {
+  toProjectIntelligenceContract,
+  validateProjectIntelligenceContract,
+  CURRENT_CONTRACT_VERSION,
+  mergeEffectiveCapabilities,
+  FIELD_AUTHORITY,
+  getFieldAuthority,
+} from './project-intelligence-contract.mjs';
 
 const PLUGIN_ROOT = path.dirname(fileURLToPath(import.meta.url));
 
@@ -51,20 +65,42 @@ export function getPluginRoot() {
   return PLUGIN_ROOT;
 }
 
-function parseSimpleYaml(content) {
+export function parseSimpleYaml(content) {
   const lines = String(content).split(/\r?\n/);
   const root = {};
   const stack = [{ indent: -1, obj: root }];
 
-  function peekNextList(fromIdx, indent) {
+  function peekNextSignificant(fromIdx, indent) {
     for (let i = fromIdx + 1; i < lines.length; i++) {
       const l = lines[i];
       if (!l.trim() || l.trim().startsWith('#')) continue;
       const li = l.match(/^(\s*)/)[1].length;
-      if (li <= indent) return false;
-      return /^\s*-\s+/.test(l);
+      if (li <= indent) return null;
+      return { line: l, indent: li, index: i };
     }
-    return false;
+    return null;
+  }
+
+  function peekNextList(fromIdx, indent) {
+    const next = peekNextSignificant(fromIdx, indent);
+    if (!next) return false;
+    return /^\s*-\s+/.test(next.line) || /^\s*\[\s*\]\s*$/.test(next.line);
+  }
+
+  function parseScalar(value) {
+    let parsed = value.replace(/^["']|["']$/g, '');
+    if (parsed === 'true') return true;
+    if (parsed === 'false') return false;
+    if (/^\d+$/.test(parsed)) return Number(parsed);
+    if (/^\[\s*\]$/.test(parsed)) return [];
+    if (/^\{\s*\}$/.test(parsed)) return {};
+    // Inline string lists: [node, go] or ["a", "b"]
+    if (parsed.startsWith('[') && parsed.endsWith(']')) {
+      const inner = parsed.slice(1, -1).trim();
+      if (!inner) return [];
+      return inner.split(',').map((part) => part.trim().replace(/^["']|["']$/g, '')).filter((p) => p.length > 0);
+    }
+    return parsed;
   }
 
   for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
@@ -77,16 +113,22 @@ function parseSimpleYaml(content) {
     }
     const parent = stack[stack.length - 1].obj;
 
+    // Child empty-array literal under a key that opened an empty mapping/list
+    if (/^\s*\[\s*\]\s*$/.test(line)) {
+      const frame = stack[stack.length - 1];
+      if (frame.key != null && stack.length > 1) {
+        const grand = stack[stack.length - 2].obj;
+        if (grand && typeof grand === 'object' && !Array.isArray(grand)) {
+          grand[frame.key] = [];
+          stack.pop();
+        }
+      }
+      continue;
+    }
+
     const listItem = line.match(/^\s*-\s+(.+)$/);
     if (listItem) {
       const raw = listItem[1].trim();
-      const kvItem = raw.match(/^([a-zA-Z0-9_.-]+):\s*(.*)$/);
-      if (kvItem && typeof parent === 'object' && !Array.isArray(parent)) {
-        const arrKey = stack[stack.length - 1].key;
-        if (!Array.isArray(parent)) {
-          // list of objects under parent key handled via stack
-        }
-      }
       const val = raw.replace(/^["']|["']$/g, '');
       if (Array.isArray(parent)) parent.push(val);
       continue;
@@ -99,32 +141,99 @@ function parseSimpleYaml(content) {
 
     if (value === '') {
       const isList = peekNextList(lineIdx, indent);
+      const next = peekNextSignificant(lineIdx, indent);
+      // Empty inline list on following line: key:\n  []
+      if (next && /^\s*\[\s*\]\s*$/.test(next.line)) {
+        parent[key] = [];
+        lineIdx = next.index; // consume the [] line
+        continue;
+      }
       const child = isList ? [] : {};
       parent[key] = child;
       stack.push({ indent, obj: child, key });
       continue;
     }
 
-    let parsed = value.replace(/^["']|["']$/g, '');
-    if (parsed === 'true') parsed = true;
-    else if (parsed === 'false') parsed = false;
-    else if (/^\d+$/.test(parsed)) parsed = Number(parsed);
-    parent[key] = parsed;
+    parent[key] = parseScalar(value);
   }
   return root;
+}
+
+/**
+ * Coerce known list-valued Project Intelligence Contract fields to arrays.
+ * Empty-object `{}` and string `"[]"` are known empty-list misparses — normalize to [].
+ * Non-empty objects on list fields fail closed.
+ */
+export function normalizeManifestListFields(data) {
+  if (!data || typeof data !== 'object') return data;
+
+  function asList(value, fieldPath) {
+    if (value == null) return [];
+    if (Array.isArray(value)) return value;
+    if (value === '[]') return [];
+    if (typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0) {
+      return [];
+    }
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      throw new Error(`Invalid list field ${fieldPath}: expected array, got non-empty object`);
+    }
+    throw new Error(`Invalid list field ${fieldPath}: expected array, got ${typeof value}`);
+  }
+
+  const normalized = { ...data };
+  normalized.capabilities = asList(data.capabilities, 'capabilities');
+  normalized.ownership = asList(data.ownership, 'ownership');
+
+  if (data.policy && typeof data.policy === 'object') {
+    normalized.policy = { ...data.policy };
+    normalized.policy.protected_paths = asList(data.policy.protected_paths, 'policy.protected_paths');
+    normalized.policy.tier3_operations = asList(data.policy.tier3_operations, 'policy.tier3_operations');
+  }
+
+  if (data.integrations && typeof data.integrations === 'object') {
+    normalized.integrations = { ...data.integrations };
+    normalized.integrations.mcp = asList(data.integrations.mcp, 'integrations.mcp');
+  }
+
+  if (data.verification && typeof data.verification === 'object') {
+    normalized.verification = { ...data.verification };
+    normalized.verification.commands = asList(data.verification.commands, 'verification.commands');
+  }
+
+  // agents is a map (object), not a list — leave empty mapping as {}
+  if (data.agents == null) normalized.agents = {};
+  else if (Array.isArray(data.agents)) {
+    throw new Error('Invalid field agents: expected mapping object, got array');
+  } else if (typeof data.agents !== 'object') {
+    throw new Error(`Invalid field agents: expected mapping object, got ${typeof data.agents}`);
+  }
+
+  return normalized;
 }
 
 export function loadProjectManifest(projectDir = getProjectDir()) {
   const yamlPath = path.join(projectDir, MANIFEST_PATH);
   const jsonPath = path.join(projectDir, MANIFEST_JSON_PATH);
 
+  function finalize(parsed, source) {
+    const lists = normalizeManifestListFields(normalizeProjectManifest(parsed));
+    const contract = toProjectIntelligenceContract(lists, { source });
+    const validation = validateProjectIntelligenceContract(contract);
+    if (!validation.valid) {
+      throw new Error(`Invalid Project Intelligence Contract: ${validation.issues.join('; ')}`);
+    }
+    return { source, data: contract, validation };
+  }
+
   if (fs.existsSync(yamlPath)) {
-    return { source: MANIFEST_PATH, data: normalizeProjectManifest(parseSimpleYaml(fs.readFileSync(yamlPath, 'utf8'))) };
+    const parsed = parseSimpleYaml(fs.readFileSync(yamlPath, 'utf8'));
+    return finalize(parsed, MANIFEST_PATH);
   }
   if (fs.existsSync(jsonPath)) {
-    return { source: MANIFEST_JSON_PATH, data: normalizeProjectManifest(JSON.parse(fs.readFileSync(jsonPath, 'utf8'))) };
+    const parsed = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+    return finalize(parsed, MANIFEST_JSON_PATH);
   }
-  return { source: null, data: null };
+  return { source: null, data: null, validation: null };
 }
 
 export function isProjectInitialized(projectDir = getProjectDir()) {

@@ -1,0 +1,29 @@
+# forgeos-oss-derived-capability
+schema: forgeos-oss-derived-capability
+schema_version: 1
+description: >
+  Metadata contract for OSS-derived capabilities.
+  OSS provenance does NOT imply launching an external coding-agent application.
+  Execution remains host_native or forgeos_native in the existing project workspace.
+
+fields:
+  source:
+    kind: oss
+    project: string
+    license: string
+    version_or_reference: string
+    provenance: string
+  execution:
+    mode: host_native | forgeos_native
+    workspace: existing_project
+    launches_external_application: false
+  authority:
+    policy: forgeos
+    verification: forgeos
+  implementation_kind: OSS_DERIVED
+  launches_external_runtime: false
+
+invariants:
+  - oss_derived_neq_optional_runtime
+  - oss_derived_neq_external_launcher
+  - forgeos_retains_policy_and_verification_authority

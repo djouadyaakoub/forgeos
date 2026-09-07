@@ -30,15 +30,15 @@ export function getInstalledVersionSync() {
   }
   try {
     const data = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-    return { version: data.version || null, source: 'user_install_manifest', installed_at: data.installed_at };
+    return { version: data.version ?? null, source: 'user_install_manifest', installed_at: data.installed_at };
   } catch {
     return { version: null, source: 'corrupt_install_manifest' };
   }
 }
 
-function buildDiscoveryResult(installed, latestInfo, options = {}) {
-  const installedVersion = installed.version || options.installed_version || getCanonicalVersion();
-  const latestVersion = latestInfo.version || getCanonicalVersion();
+export function buildDiscoveryResult(installed, latestInfo, options = {}) {
+  const installedVersion = installed.version ?? options.installed_version ?? getCanonicalVersion();
+  const latestVersion = latestInfo.version ?? getCanonicalVersion();
   const latestManifest = latestInfo.manifest || latestInfo.release_manifest;
   const cmp = compareSemver(installedVersion, latestVersion);
   const updateAvailable = cmp < 0;
@@ -86,7 +86,7 @@ function buildDiscoveryResult(installed, latestInfo, options = {}) {
 export function discoverUniversalOsUpdate(options = {}) {
   const installed = getInstalledVersionSync();
   const latestManifest = options.release_manifest || readReleaseManifest(options.manifest_path);
-  const latestVersion = options.latest_version || latestManifest?.release?.version || getCanonicalVersion();
+  const latestVersion = options.latest_version ?? latestManifest?.release?.version ?? getCanonicalVersion();
 
   return buildDiscoveryResult(installed, {
     version: latestVersion,
