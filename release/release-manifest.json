@@ -1,7 +1,7 @@
 {
   "release": {
     "license": "MIT",
-    "version": "2.0.0-rc.1",
+    "version": "2.0.0-rc.2",
     "plugin_id": "forgeos",
     "adapter": {
       "min_schema": 1,
@@ -19,8 +19,8 @@
     },
     "artifacts": [
       {
-        "name": "forgeos-2.0.0-rc.1.zip",
-        "sha256": "b2957a0abe1a25a6ed7c712db75f1f7aa4b60cbcb24232407795143e7307c18f"
+        "name": "forgeos-2.0.0-rc.2.zip",
+        "sha256": "7b0ba4c48a07a7e6d510c0a48ea295ea8f3db1743dc5a9772e3b8f066956f922"
       }
     ],
     "adapters": {
@@ -29,6 +29,13 @@
       }
     },
     "version_history": [
+      {
+        "version": "2.0.0-rc.2",
+        "date": "2026-09-08",
+        "breaking": true,
+        "security": false,
+        "compatibility": "adapter_schema_1_explicit_major_version_review"
+      },
       {
         "version": "2.0.0-rc.1",
         "date": "2026-09-07",

@@ -43,6 +43,7 @@ test('large integers are ordered without IEEE754 rounding or overflow',()=>{
 });
 test('real discovery result builder detects RC upgrades and never stable-to-RC upgrade',()=>{
   for(const [installed,latest,expected] of [['2.0.0-rc.1','2.0.0-rc.2',true],['2.0.0-rc.1','2.0.0',true],
+    ['2.0.0-rc.2','2.0.0-rc.3',true],['2.0.0-rc.2','2.0.0',true],
     ['2.0.0','2.0.0-rc.2',false],['1.0.0','1.0.1',true],['2.0.0+one','2.0.0+two',false]]){
     const r=buildDiscoveryResult({version:installed},{version:latest});
     assert.equal(r.update_available,expected);assert.equal(r.update_status.update_available,expected);

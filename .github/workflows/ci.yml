@@ -47,6 +47,9 @@ jobs:
           AGENT_OS_SKIP_FULL_REGRESSION: '1'
 
       - name: Core test suites
+        # Explicit bash uses -e -o pipefail on every runner, including Windows.
+        # A failed native command must not be masked by a later successful one.
+        shell: bash
         run: |
           npm test
           npm run test:policy
@@ -72,5 +75,4 @@ jobs:
           AGENT_OS_SKIP_FULL_REGRESSION: '1'
 
       - name: Clean INCLUDE-only source reproduction
-        if: matrix.os == 'windows-latest'
         run: npm run validate:rc-source

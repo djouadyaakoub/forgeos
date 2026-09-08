@@ -2,6 +2,13 @@
 
 All notable changes to ForgeOS follow [Semantic Versioning](https://semver.org/).
 
+## [2.0.0-rc.2] - 2026-09-08
+
+- Replace external maintainer-project adapter checks with mandatory repository-owned fixture checks, preserving extraction and dry-run assertions.
+- Stop CI immediately on any failed core command on all platforms; run INCLUDE-only clean-source reproduction across the full OS/Node matrix.
+- Retain the Architecture 2.0 features and RC limitations below. RC1's public source tag is preserved; no RC1 GitHub Release was published after its CI failure.
+- This is a prerelease, not stable 2.0.0. Exact approval covers only the supported dispatch subset; interactive host actions are not universally intercepted. OpenHands remains optional and context metrics do not guarantee token savings.
+
 ## [2.0.0-rc.1] - 2026-09-07
 
 - Host-independent Project Intelligence, Policy, task scope, orchestration and derived evidence/Canvas.

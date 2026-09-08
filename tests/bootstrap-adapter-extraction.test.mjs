@@ -17,7 +17,6 @@ import { buildProjectProfile, resolveProjectKind } from '../bootstrap/project-di
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.dirname(ROOT);
 const FIXTURES = path.join(ROOT, 'fixtures');
-const SPEED_FLEXY = process.env.SPEED_FLEXY_PATH || 'C:\\Apps\\speed-flexy-server';
 
 let passed = 0;
 let failed = 0;
@@ -189,10 +188,9 @@ test('AGENT_OS_INITIALIZED when manifest exists', () => {
   assert(kind.project_kind === 'AGENT_OS_INITIALIZED', `got ${kind.project_kind}`);
 });
 
-console.log('\n--- Speed Flexy reference (optional) ---');
-test('Speed Flexy extracts non-empty adapter sections', () => {
-  if (!fs.existsSync(SPEED_FLEXY)) throw new Error('SKIP: Speed Flexy not available');
-  const { adapter, validation } = extractProjectAdapter(SPEED_FLEXY);
+console.log('\n--- Hermetic mature-project regression ---');
+test('Mature fixture extracts non-empty adapter sections', () => {
+  const { adapter, validation } = extractProjectAdapter(MATURE);
   const s = summarizeAdapter(adapter);
   assert(s.capability_count > 0, 'capabilities');
   assert(s.tier3_operation_count > 0, 'tier3');
@@ -201,10 +199,9 @@ test('Speed Flexy extracts non-empty adapter sections', () => {
   assert(validation.valid, validation.issues?.join(', '));
 });
 
-test('Speed Flexy dry-run shows proposed_adapter', () => {
-  if (!fs.existsSync(SPEED_FLEXY)) throw new Error('SKIP');
+test('Mature fixture dry-run shows proposed_adapter', () => {
   const init = path.join(REPO_ROOT, 'bootstrap/initialize.mjs');
-  const out = execSync(`node "${init}" --dry-run --project-dir "${SPEED_FLEXY}"`, { encoding: 'utf8' });
+  const out = execSync(`node "${init}" --dry-run --project-dir "${MATURE}"`, { encoding: 'utf8' });
   const report = JSON.parse(out);
   assert(report.proposed_adapter?.capabilities > 0, 'proposed capabilities');
   assert(report.proposed_adapter?.tier3_operations?.length > 0, 'proposed tier3');

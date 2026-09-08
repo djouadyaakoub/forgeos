@@ -93,7 +93,7 @@ console.log('Phase 16 — Distribution & Update Tests\n');
 
 console.log('--- Versioning ---');
 test('Canonical version from package.json', () => {
-  assert(getCanonicalVersion() === '2.0.0-rc.1');
+  assert(getCanonicalVersion() === '2.0.0-rc.2');
 });
 test('Version sync across package, plugin, rules', () => {
   const sync = validateVersionSync();

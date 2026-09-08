@@ -1,4 +1,4 @@
-# ForgeOS 2.0.0-rc.1 — prerelease
+# ForgeOS 2.0.0-rc.2 — prerelease
 
 Tier-3 approvals now require exact task/operation/workspace/scope/input binding
 and durable one-use consumption for supported Local Executor direct Git push
@@ -115,7 +115,7 @@ Legacy: `AGENT_OS_PLUGIN_ROOT`, `CURSOR_AGENT_OS_PLUGIN_ROOT` (still supported).
 
 ## Version
 
-**2.0.0-rc.1** — Architecture 2.0 prerelease; canonical source: `package.json`. Stable 2.0.0 is not released. Check GitHub Releases for publication and validated product assets; an automatic GitHub source archive is not the ForgeOS product ZIP.
+**2.0.0-rc.2** — Architecture 2.0 prerelease; canonical source: `package.json`. Stable 2.0.0 is not released. Check GitHub Releases for publication and validated product assets; an automatic GitHub source archive is not the ForgeOS product ZIP.
 
 ## Historical note
 
