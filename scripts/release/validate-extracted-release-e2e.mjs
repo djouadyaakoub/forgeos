@@ -312,14 +312,16 @@ process.exit(out.passed === out.total ? 0 : 1);
     import {tryLoadBabelParser} from ${JSON.stringify(pathToFileURL(path.join(releaseDir,'intelligence/adapters/babel-parser/index.mjs')).href)};
     import {runStructuralAnalysis} from ${JSON.stringify(pathToFileURL(path.join(releaseDir,'intelligence/adapters/index.mjs')).href)};
     const available=tryLoadBabelParser().available;
+    const {assertParserLocality}=await import(${JSON.stringify(new URL('./physical-locality.mjs',import.meta.url).href)});
+    let locality=null;
     if(available!==${expected})throw new Error('unexpected_optional_parser_availability');
     if(available) {
-      const r=createRequire(${JSON.stringify(pathToFileURL(path.join(releaseDir,'package.json')).href)});
-      if(!r.resolve('@babel/parser').startsWith(${JSON.stringify(releaseDir)}))throw new Error('parser_not_local_to_extracted_package');
+      const r=createRequire(${JSON.stringify(pathToFileURL(path.join(releaseDir,'intelligence/adapters/babel-parser/index.mjs')).href)});
+      locality=assertParserLocality(${JSON.stringify(releaseDir)},r.resolve('@babel/parser'));
     }
     const r=runStructuralAnalysis({project_dir:${JSON.stringify(projectDir)},persist_cache:false,use_cache:false});
     if(!r.ok||r.adapter_id!==(${expected}?'babel-parser':'forgeos-structural'))throw new Error(JSON.stringify(r));
-    console.log(JSON.stringify({available,adapter:r.adapter_id,status:r.facts.status}));
+    console.log(JSON.stringify({available,adapter:r.adapter_id,status:r.facts.status,locality}));
   `],{env:cleanEnv,cwd:releaseDir});
   const missingBabel=babelProbe(false);
   if(missingBabel.status!==0)fail('extracted optional Babel fallback failed',{stderr:missingBabel.stderr});

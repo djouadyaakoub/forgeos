@@ -2,6 +2,12 @@
 
 All notable changes to ForgeOS follow [Semantic Versioning](https://semver.org/).
 
+## [2.0.0-rc.4] - 2026-09-08
+
+- Correct extracted-package dependency locality validation across physical/canonical path aliases, including macOS temporary-directory aliases.
+- Enforce physical containment inside the extracted package dependency tree; reject sibling-prefix traps, external dependency resolution, symlink escapes and failed realpath operations.
+- Add bounded locality diagnostics and focused cross-platform regressions. No new feature; this remains a prerelease, not stable 2.0.0.
+
 ## [2.0.0-rc.3] - 2026-09-08
 
 - Correct checksum-validator subprocess module mode for Node 18; missing/malformed artifacts fail closed with useful diagnostics.
