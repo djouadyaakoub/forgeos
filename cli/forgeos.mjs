@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /** One product entrypoint; legacy CLIs remain supported. No automatic execution. */
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { isExecutedAsMain } from './main.mjs';
 import { projectStatus, nextProjectAction, completeProjectTask } from '../intelligence/orchestrator/product-workflow.mjs';
 import { listKnowledge, retrieveKnowledge, writeKnowledgeCandidate, reviewKnowledge } from '../intelligence/assessment/knowledge-lifecycle.mjs';
 import { discoverCandidate, listDiscovery } from '../intelligence/capability/discovery.mjs';
@@ -125,7 +124,7 @@ export function formatProductResult(r) {
   if(r.warnings?.length)lines.push(`Warnings: ${r.warnings.join(', ')}`);
   return lines.join('\n');
 }
-if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
+if(isExecutedAsMain(import.meta.url)) {
   const result=runProductCli();
   console.log(process.argv.includes('--json')?JSON.stringify(result,null,2):formatProductResult(result));
   process.exitCode=!result.ok?1:result.status==='VERIFICATION_FAILED'?2:0;

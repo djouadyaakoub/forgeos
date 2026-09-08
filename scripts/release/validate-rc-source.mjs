@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /** Reproduce from INCLUDE files only. Temporary logs are evidence, never source or publication. */
 import fs from 'node:fs';
+import { isExecutedAsMain } from '../../cli/main.mjs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -32,7 +33,7 @@ export function fixtureSnapshot(root) {
   const git=spawnSync('git',['status','--porcelain=v1','--untracked-files=all'],{cwd:root,encoding:'utf8'});
   return {file_count:Object.keys(files).length,files,dirty_count:git.status===0?git.stdout.trim().split(/\r?\n/).filter(Boolean).length:null};
 }
-export const RC_SUITES=['test','test:policy','test:bootstrap','test:adapter','test:runtime','test:plugin',
+export const RC_SUITES=['test:rc3','test','test:policy','test:bootstrap','test:adapter','test:runtime','test:plugin',
   'test:intelligence','test:orchestration','test:deployment','test:neutrality','test:project-intelligence',
   'test:stage8','test:stage9','test:stage10','test:stage11','test:stage12','test:stage14','test:runtime-execution',
   'test:stage19','test:stage22','test:stage23','test:stage24','test:stage25','test:stage26','test:stage27','test:stage28','test:stage29','test:stage30','test:stage31a','test:distribution','test:security'];
@@ -81,4 +82,4 @@ function runGate() {
   result.ok=ok;persist();console.log(JSON.stringify({ok,evidence:path.join(base,'result.json'),hygiene:result.hygiene,archive_matches_checkout:result.archive_matches_checkout},null,2));
   process.exitCode=ok?0:1;
 }
-if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))runGate();
+if(isExecutedAsMain(import.meta.url))runGate();

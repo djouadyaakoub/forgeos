@@ -4,6 +4,7 @@
  */
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isExecutedAsMain } from './main.mjs';
 import { discoverProject } from '../policy/project-adapter.mjs';
 import { runProjectAssessment } from '../intelligence/assessment/engine.mjs';
 import { formatCanvasText } from '../intelligence/assessment/canvas.mjs';
@@ -264,11 +265,6 @@ export function runForgeOsAssessmentCli(argv = process.argv, options = {}) {
   return payload;
 }
 
-const __cliEntry = fileURLToPath(import.meta.url);
-const __isMain =
-  process.argv[1] &&
-  path.resolve(process.argv[1]) === path.resolve(__cliEntry);
-
-if (__isMain) {
+if (isExecutedAsMain(import.meta.url)) {
   runForgeOsAssessmentCli();
 }

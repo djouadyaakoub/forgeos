@@ -1,5 +1,6 @@
 /** Deterministic source/distribution decisions. No Git mutation and no dependency on Git presence. */
 import fs from 'node:fs';
+import { isExecutedAsMain } from '../../cli/main.mjs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
@@ -55,4 +56,4 @@ export function deriveRcSourceManifest(root=SOURCE_ROOT) {
     source_fingerprint:sha(JSON.stringify(included.map(f=>[f.path,f.sha256]))),
     authority:'source_inclusion_only_not_git_or_publication_authorization'};
 }
-if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))console.log(JSON.stringify(deriveRcSourceManifest(process.argv[2]||SOURCE_ROOT),null,2));
+if(isExecutedAsMain(import.meta.url))console.log(JSON.stringify(deriveRcSourceManifest(process.argv[2]||SOURCE_ROOT),null,2));

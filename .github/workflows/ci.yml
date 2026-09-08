@@ -51,6 +51,7 @@ jobs:
         # A failed native command must not be masked by a later successful one.
         shell: bash
         run: |
+          npm run test:rc3
           npm test
           npm run test:policy
           npm run test:bootstrap

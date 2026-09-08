@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 /** Host list/doctor/config/prepare. Mutating commands require --apply. */
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { isExecutedAsMain } from './main.mjs';
 import { discoverHosts } from '../host/discovery.mjs';
 import { diagnoseHost } from '../host/doctor.mjs';
 import { readHostConfiguration, setProjectHost } from '../host/configuration.mjs';
@@ -43,7 +42,7 @@ export function runForgeOsHostCli(argv = process.argv, options = {}) {
   }
   return result;
 }
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isExecutedAsMain(import.meta.url)) {
   const result = runForgeOsHostCli();
   process.exitCode = result.ok ? 0 : 1;
 }

@@ -5,7 +5,7 @@
  * Does not remediate, execute, authorize, or mutate Project Intelligence.
  */
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { isExecutedAsMain } from './main.mjs';
 import { runStructuralAnalysis, describeAnalyzerAvailability } from '../intelligence/adapters/index.mjs';
 import { collectProjectFacts } from '../intelligence/assessment/facts.mjs';
 
@@ -74,12 +74,7 @@ export function runForgeOsInspectCli(argv = process.argv, options = {}) {
   return payload;
 }
 
-const __cliEntry = fileURLToPath(import.meta.url);
-const __isMain =
-  process.argv[1] &&
-  path.resolve(process.argv[1]) === path.resolve(__cliEntry);
-
-if (__isMain) {
+if (isExecutedAsMain(import.meta.url)) {
   const result = runForgeOsInspectCli();
   process.exit(result.ok === false && result.reason === 'forbidden_global_bypass' ? 2 : 0);
 }

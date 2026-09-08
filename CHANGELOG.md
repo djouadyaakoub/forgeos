@@ -2,6 +2,13 @@
 
 All notable changes to ForgeOS follow [Semantic Versioning](https://semver.org/).
 
+## [2.0.0-rc.3] - 2026-09-08
+
+- Correct checksum-validator subprocess module mode for Node 18; missing/malformed artifacts fail closed with useful diagnostics.
+- Recognize CLI entrypoints through realpath/symlink/junction aliases and filesystem case variants without global path lowercasing or automatic execution on library import.
+- Validate non-empty JSON and subprocess errors in extracted consumer E2E, including direct-versus-alias host CLI output parity.
+- Release-blocker corrections only; no new product feature. This remains a prerelease, not stable 2.0.0. Existing RC limitations and optional-runtime boundaries are unchanged.
+
 ## [2.0.0-rc.2] - 2026-09-08
 
 - Replace external maintainer-project adapter checks with mandatory repository-owned fixture checks, preserving extraction and dry-run assertions.

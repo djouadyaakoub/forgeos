@@ -1,7 +1,7 @@
 {
   "name": "forgeos",
   "license": "MIT",
-  "version": "2.0.0-rc.2",
+  "version": "2.0.0-rc.3",
   "description": "ForgeOS — Universal Development Intelligence Platform",
   "type": "module",
   "private": true,
@@ -53,6 +53,7 @@
     "test:stage29": "node --test tests/runtime-stage29-release-preservation.test.mjs",
     "test:stage30": "node --test tests/runtime-stage30-exact-approval.test.mjs",
     "test:stage31a": "node --test tests/runtime-stage31a-semver.test.mjs",
+    "test:rc3": "node --test tests/rc3-cross-platform.test.mjs",
     "validate:rc-source": "node scripts/release/validate-rc-source.mjs",
     "test:runtime-execution": "node tests/runtime-execution.test.mjs && node tests/runtime-execution-e2e.test.mjs",
     "test:runtime-backend": "node tests/runtime-backend-interface.test.mjs"

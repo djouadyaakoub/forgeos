@@ -9,6 +9,7 @@ import { fileURLToPath } from 'node:url';
 import { validateVersionSync, getCanonicalVersion } from '../../policy/version.mjs';
 import { checkInvariantRegistry } from './invariant-enforcer-registry.mjs';
 import { auditProductLeakage, auditProductPaths } from './product-leakage.mjs';
+import { checkReleaseChecksums } from './checksum-validation.mjs';
 
 const ROOT = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
 
@@ -95,25 +96,6 @@ function runSecretScan() {
   };
 }
 
-function checkChecksums() {
-  const checksumsPath = path.join(ROOT, 'release/checksums.json');
-  if (!fs.existsSync(checksumsPath)) {
-    return { check: 'checksums_manifest', status: 'warn', reason: 'missing — run npm run build-release' };
-  }
-  const checksums = JSON.parse(fs.readFileSync(checksumsPath, 'utf8'));
-  const archive = checksums.artifacts?.find((a) => /\.zip$/i.test(a.name));
-  if (!archive) return { check: 'checksums_manifest', status: 'warn', reason: 'no_archive_entry' };
-  const archivePath = path.join(ROOT, 'release', archive.name);
-  if (!fs.existsSync(archivePath)) {
-    return { check: 'checksums_manifest', status: 'warn', reason: 'archive_not_found' };
-  }
-  const result = spawnSync(process.execPath, [
-    '-e',
-    `import { verifySha256 } from './scripts/security/checksum.mjs'; const r=verifySha256('${archivePath.replace(/\\/g, '/')}', '${archive.sha256}'); process.exit(r.valid?0:1);`,
-  ], { cwd: ROOT, encoding: 'utf8' });
-  return { check: 'checksums_manifest', status: result.status === 0 ? 'pass' : 'fail' };
-}
-
 function runSecurityTests() {
   const result = spawnSync(process.execPath, ['tests/distribution-security.test.mjs'], {
     cwd: ROOT,
@@ -191,7 +173,7 @@ const checks = [
   runSecurityTests(),
   runManifestContractTests(),
   ensureReleaseBuilt(),
-  checkChecksums(),
+  checkReleaseChecksums(ROOT),
   runExtractedReleaseE2E(),
 ];
 

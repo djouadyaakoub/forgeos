@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 /** Read-only project knowledge diagnostics. No learning promotion or execution. */
 import { assessProjectKnowledge } from '../intelligence/assessment/knowledge.mjs';
+import { isExecutedAsMain } from './main.mjs';
+if (isExecutedAsMain(import.meta.url)) {
 const args = process.argv.slice(2);
 try {
   let project = process.cwd();
@@ -10,3 +12,4 @@ try {
   }
   console.log(JSON.stringify({ ok: true, ...assessProjectKnowledge(project) }, null, 2));
 } catch (e) { console.log(JSON.stringify({ ok: false, reason: e.message })); process.exitCode = 1; }
+}

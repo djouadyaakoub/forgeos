@@ -2,7 +2,7 @@
 
 ## Agent OS version
 
-Current: **2.0.0-rc.2**, a prerelease (canonical source: `package.json`; synchronized with `policy/rules.json`).
+Current: **2.0.0-rc.3**, a prerelease (canonical source: `package.json`; synchronized with `policy/rules.json`).
 
 Semantic versioning: `major.minor.patch-prerelease+build`. Stable outranks prerelease for the same core; build metadata does not affect precedence.
 

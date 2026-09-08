@@ -44,6 +44,7 @@ test('large integers are ordered without IEEE754 rounding or overflow',()=>{
 test('real discovery result builder detects RC upgrades and never stable-to-RC upgrade',()=>{
   for(const [installed,latest,expected] of [['2.0.0-rc.1','2.0.0-rc.2',true],['2.0.0-rc.1','2.0.0',true],
     ['2.0.0-rc.2','2.0.0-rc.3',true],['2.0.0-rc.2','2.0.0',true],
+    ['2.0.0-rc.3','2.0.0',true],['2.0.0','2.0.0-rc.3',false],['2.0.0-rc.3','2.0.0-rc.2',false],
     ['2.0.0','2.0.0-rc.2',false],['1.0.0','1.0.1',true],['2.0.0+one','2.0.0+two',false]]){
     const r=buildDiscoveryResult({version:installed},{version:latest});
     assert.equal(r.update_available,expected);assert.equal(r.update_status.update_available,expected);
@@ -54,7 +55,7 @@ test('real discovery result builder detects RC upgrades and never stable-to-RC u
   }
 });
 test('actual activation ordering prerequisite denies downgrades and invalids without activation',()=>{
-  for(const [current,target] of [['2.0.0','2.0.0-rc.1'],['2.0.0-rc.2','2.0.0-rc.1']])
+  for(const [current,target] of [['2.0.0','2.0.0-rc.1'],['2.0.0-rc.2','2.0.0-rc.1'],['2.0.0-rc.3','2.0.0-rc.2'],['2.0.0','2.0.0-rc.3']])
     assert.equal(evaluateActivationVersionOrder(current,target).reason,'downgrade_not_allowed');
   assert.deepEqual(evaluateActivationVersionOrder('2.0.0-rc.1','2.0.0-rc.2'),{blocked:false,comparison:1});
   assert.equal(evaluateActivationVersionOrder('2.0.0','2.0.0-rc.1',{allow_downgrade:true}).blocked,false);

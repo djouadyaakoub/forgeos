@@ -18,6 +18,7 @@ import path from 'node:path';
 import os from 'node:os';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
+import { parseProcessJson } from './process-json.mjs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { getCanonicalVersion } from '../../policy/version.mjs';
 import { getInstallManifestPath } from '../../policy/plugin-root.mjs';
@@ -139,9 +140,9 @@ try {
   if (install.status !== 0) fail('install-from-release failed', { stdout: install.stdout, stderr: install.stderr });
   let installReport;
   try {
-    installReport = JSON.parse(install.stdout);
-  } catch {
-    fail('install output not JSON', { stdout: install.stdout });
+    installReport = parseProcessJson(install, 'install');
+  } catch (e) {
+    fail('install output not JSON', { stdout: install.stdout, stderr: install.stderr, reason: e.message });
   }
   if (installReport.status !== 'INSTALLED') fail('install status not INSTALLED', { installReport });
   const installedRoot = path.resolve(installReport.source || '');
@@ -226,11 +227,17 @@ process.exit(out.passed === out.total ? 0 : 1);
   const hostDoctor = run([path.join(releaseDir, 'cli/host.mjs'), 'doctor', '--project', projectDir,
     '--host', 'codex', '--json'], { env: cleanEnv });
   if (hostDoctor.status !== 0) fail('extracted host doctor failed', { stdout: hostDoctor.stdout, stderr: hostDoctor.stderr });
-  const hostState = JSON.parse(hostDoctor.stdout);
+  const hostState = parseProcessJson(hostDoctor, 'hostDoctor');
+  const aliasDir = path.join(base, 'release-alias');
+  fs.symlinkSync(releaseDir, aliasDir, process.platform === 'win32' ? 'junction' : 'dir');
+  const aliasDoctor = run([path.join(aliasDir, 'cli/host.mjs'), 'doctor', '--project', projectDir,
+    '--host', 'codex', '--json'], { env: cleanEnv });
+  const aliasState = parseProcessJson(aliasDoctor, 'extracted alias host doctor');
+  if (JSON.stringify(aliasState) !== JSON.stringify(hostState)) fail('alias host output differs from direct output', { stderr: aliasDoctor.stderr });
   if (!hostState.handoff_ready || hostState.live_verified || hostState.contract.programmatic_agent_start) fail('extracted host contract incorrect');
   const knowledge = run([path.join(releaseDir, 'cli/knowledge.mjs'), '--project', projectDir, '--json'], { env: cleanEnv });
   if (knowledge.status !== 0) fail('extracted knowledge failed', { stderr: knowledge.stderr });
-  const knowledgeState = JSON.parse(knowledge.stdout);
+  const knowledgeState = parseProcessJson(knowledge, 'knowledge');
   if (!knowledgeState.facts?.fingerprint || knowledgeState.learning_scope !== 'project_only'
     || knowledgeState.policy_authority !== false) fail('extracted knowledge contract incorrect');
   const scopeScript = `import {createTaskScope,checkScopeContainment} from ${JSON.stringify(pathToFileURL(path.join(releaseDir, 'policy/task-scope.mjs')).href)};
@@ -241,15 +248,15 @@ process.exit(out.passed === out.total ? 0 : 1);
   // Stage 26: shipped product status, candidate/review/recall and inert discovery APIs.
   const productCli = path.join(releaseDir, 'cli/forgeos.mjs');
   const productStatus = run([productCli,'status','--project',projectDir,'--host','codex','--json'], {env:cleanEnv});
-  if (productStatus.status !== 0 || !JSON.parse(productStatus.stdout).pi?.fingerprint) fail('extracted product status failed');
+  if (productStatus.status !== 0 || !parseProcessJson(productStatus, 'productStatus').pi?.fingerprint) fail('extracted product status failed');
   const addKnowledge = run([productCli,'knowledge','add','--project',projectDir,'--id','package-knowledge',
     '--text','Package guidance is available for interactive work.','--source','package-agent','--evidence','AGENTS.md','--json'],{env:cleanEnv});
-  if(addKnowledge.status !== 0 || JSON.parse(addKnowledge.stdout).candidate?.review_status !== 'UNREVIEWED') fail('extracted candidate writeback failed');
+  if(addKnowledge.status !== 0 || parseProcessJson(addKnowledge, 'addKnowledge').candidate?.review_status !== 'UNREVIEWED') fail('extracted candidate writeback failed');
   const acceptKnowledge = run([productCli,'knowledge','accept','--project',projectDir,'--id','package-knowledge',
     '--reviewer','package-operator','--confirm-human','--note','Controlled extracted test operator simulation','--json'],{env:cleanEnv});
   if(acceptKnowledge.status !== 0) fail('extracted review failed');
   const recall = run([productCli,'knowledge','recall','--project',projectDir,'--json'],{env:cleanEnv});
-  if(recall.status !== 0 || JSON.parse(recall.stdout).items?.length !== 1) fail('extracted accepted retrieval failed');
+  if(recall.status !== 0 || parseProcessJson(recall, 'recall').items?.length !== 1) fail('extracted accepted retrieval failed');
   const discoveryScript = `import {assessDiscoveryCandidate} from ${JSON.stringify(pathToFileURL(path.join(releaseDir,'intelligence/capability/discovery.mjs')).href)};
     const r=assessDiscoveryCandidate({candidate_id:'package-candidate',source_kind:'MCP',name:'Fixture',description:'Metadata only',source:'fixture',url:'https://example.org',revision:'fixture',license:'MIT',discovered_at:'2026-01-01T00:00:00Z',expires_at:'2099-01-01T00:00:00Z',claims:['example'],requirements:{network:true,docker:false,external_runtime:false},provenance:{observer:'test',evidence:'Controlled fixture'}});
     if(r.status!=='ELIGIBLE'||r.registered||r.executable||r.policy_approved) process.exit(1);`;
@@ -277,29 +284,29 @@ process.exit(out.passed === out.total ? 0 : 1);
   const init27=publicCli('init','--apply');
   if(init27.status!==0)fail('extracted init failed',{stderr:init27.stderr});
   const minimal27=publicCli('inspect','--path','README.md');
-  if(minimal27.status!==0||JSON.parse(minimal27.stdout).workflow?.profile!=='MINIMAL')fail('extracted minimal workflow failed');
+  if(minimal27.status!==0||parseProcessJson(minimal27, 'minimal27').workflow?.profile!=='MINIMAL')fail('extracted minimal workflow failed');
   const scoped28=publicCli('inspect','--path','README.md','--risk','medium');
-  if(scoped28.status!==0||JSON.parse(scoped28.stdout).workflow?.profile!=='SCOPED')fail('extracted scoped workflow failed');
+  if(scoped28.status!==0||parseProcessJson(scoped28, 'scoped28').workflow?.profile!=='SCOPED')fail('extracted scoped workflow failed');
   const full28=publicCli('inspect','--path','README.md','--risk','high','--workflow','minimal');
-  if(full28.status!==0||JSON.parse(full28.stdout).workflow?.profile!=='FULL')fail('extracted full workflow floor failed');
+  if(full28.status!==0||parseProcessJson(full28, 'full28').workflow?.profile!=='FULL')fail('extracted full workflow floor failed');
   for(const host of ['codex','cursor','claude-code']) {
     const preparation=run([productCli,'host','prepare','--project',semanticDir,'--host',host,'--apply','--json'],{env:cleanEnv});
     if(preparation.status!==0)fail('extracted host preparation failed',{host,stderr:preparation.stderr});
     const doctor=run([productCli,'host','doctor','--project',semanticDir,'--host',host,'--json'],{env:cleanEnv});
-    const state=JSON.parse(doctor.stdout);
+    const state=parseProcessJson(doctor, 'doctor');
     if(doctor.status!==0||!state.handoff_ready||state.live_verified||state.contract.programmatic_agent_start)fail('extracted host contract failed',{host,state});
   }
   const prep27=publicCli('next','--capability','documentation-sync','--path','docs/STACK.md','--prepare');
   if(prep27.status!==0)fail('extracted semantic preparation failed',{stdout:prep27.stdout,stderr:prep27.stderr});
-  const task27=JSON.parse(prep27.stdout).handoff?.task_id;
+  const task27=parseProcessJson(prep27, 'prep27').handoff?.task_id;
   if(!task27)fail('extracted semantic task missing');
   const fail27=publicCli('complete','--task',task27,'--changed','docs/STACK.md');
-  if(JSON.parse(fail27.stdout).verification_status!=='FAIL')fail('extracted missing document falsely passed');
+  if(parseProcessJson(fail27, 'fail27', 2).verification_status!=='FAIL')fail('extracted missing document falsely passed');
   fs.writeFileSync(path.join(semanticDir,'docs/STACK.md'),'# Stack\nNode.js\n');
   const pass27=publicCli('complete','--task',task27,'--changed','docs/STACK.md');
-  if(pass27.status!==0||!JSON.parse(pass27.stdout).capability_satisfied)fail('extracted semantic verification failed',{stdout:pass27.stdout});
+  if(pass27.status!==0||!parseProcessJson(pass27, 'pass27').capability_satisfied)fail('extracted semantic verification failed',{stdout:pass27.stdout});
   const benchmark27=publicCli('benchmark','context','--evidence','README.md');
-  if(benchmark27.status!==0||JSON.parse(benchmark27.stdout).real_token_usage!=='REAL_TOKEN_USAGE_UNAVAILABLE')fail('extracted benchmark failed');
+  if(benchmark27.status!==0||parseProcessJson(benchmark27, 'benchmark27').real_token_usage!=='REAL_TOKEN_USAGE_UNAVAILABLE')fail('extracted benchmark failed');
   const babelProbe=expected=>run(['--input-type=module','-e',`
     import {createRequire} from 'node:module';
     import {tryLoadBabelParser} from ${JSON.stringify(pathToFileURL(path.join(releaseDir,'intelligence/adapters/babel-parser/index.mjs')).href)};
@@ -333,13 +340,14 @@ process.exit(out.passed === out.total ? 0 : 1);
     project_dir: projectDir.replace(/\\/g, '/'),
     zip_entry: REQUIRED_ZIP_ENTRY,
     install: installReport.status,
-    policy: JSON.parse(policy.stdout),
+    policy: parseProcessJson(policy, 'policy'),
     orchestrator_exit: orch.status,
-    host_platform: { prepared: JSON.parse(hostPrepare.stdout).ok, doctor_ready: hostState.handoff_ready, live_verified: false },
+    rc3_alias: { tested: true, json_output: true, same_as_direct: true },
+    host_platform: { prepared: parseProcessJson(hostPrepare, 'hostPrepare').ok, doctor_ready: hostState.handoff_ready, live_verified: false },
     stage25: { knowledge_partition: true, scope_containment: true },
     stage26: { product_status:true, candidate_writeback:true, explicit_review:true, accepted_retrieval:true, inert_discovery:true, verified_lifecycle:true },
     stage27: {bin_mapping:true,init:true,minimal_without_full_assessment:true,semantic_fail_then_pass:true,context_benchmark:true},
-    stage28: {local_state_excluded:true,scoped:true,full_risk_floor:true,hosts:['codex','cursor','claude-code'],babel_absent:JSON.parse(missingBabel.stdout),babel_present:JSON.parse(presentBabel.stdout),dependency_install:'npm ci --ignore-scripts --no-audit --no-fund'},
+    stage28: {local_state_excluded:true,scoped:true,full_risk_floor:true,hosts:['codex','cursor','claude-code'],babel_absent:parseProcessJson(missingBabel, 'missingBabel'),babel_present:parseProcessJson(presentBabel, 'presentBabel'),dependency_install:'npm ci --ignore-scripts --no-audit --no-fund'},
     source_mutations: mutated,
   }, null, 2));
 } finally {
